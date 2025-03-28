@@ -555,14 +555,174 @@ p[style*="color: red"] {
 
 /* === Trang Lịch Sử Đơn Hàng (order_history.php) === */
 
-.cancel-link {
+
+/* === Trang Lịch Sử Đơn Hàng (order_history.php) === */
+
+.order-table {
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.order-table th,
+.order-table td {
+    padding: 15px;
+    border-bottom: 1px solid #EDEDED;
+    text-align: center;
+}
+
+.order-table th {
+    background-color: #005662;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.order-table .status {
+    font-weight: 500;
+}
+
+.order-table .status-processing {
+    color: #F47920;
+    /* Cam cho đang xử lý */
+}
+
+.order-table .status-completed {
+    color: #28A745;
+    /* Xanh lá cho hoàn thành */
+}
+
+.order-table .status-cancelled {
     color: #D32F2F;
-    /* Đỏ cho liên kết hủy */
+    /* Đỏ cho đã hủy */
+}
+
+.order-table .view-details {
+    background-color: #005662;
+    color: #FFFFFF;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.order-table .view-details:hover {
+    background-color: #003D47;
+}
+
+.order-table .cancel-order {
+    color: #D32F2F;
+    text-decoration: none;
+    margin-left: 10px;
+    font-weight: 500;
+}
+
+.order-table .cancel-order:hover {
+    text-decoration: underline;
+}
+
+.empty-history {
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+}
+
+.empty-history a {
+    color: #F47920;
     text-decoration: none;
 }
 
-.cancel-link:hover {
+.empty-history a:hover {
     text-decoration: underline;
+}
+
+
+/* Modal */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+}
+
+.modal-content {
+    background-color: #FFFFFF;
+    margin: 10% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: slideIn 0.3s ease;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+}
+
+.close-modal:hover {
+    color: #D32F2F;
+}
+
+#order-details table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#order-details table th,
+#order-details table td {
+    padding: 10px;
+    border-bottom: 1px solid #EDEDED;
+    text-align: left;
+}
+
+#order-details table th {
+    background-color: #F5F6F5;
+    color: #005662;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+
+/* Responsive cho order_history.php */
+
+@media (max-width: 768px) {
+    .order-table {
+        display: block;
+        overflow-x: auto;
+    }
+    .order-table td,
+    .order-table th {
+        font-size: 14px;
+    }
+    .modal-content {
+        width: 95%;
+        margin: 20% auto;
+    }
 }
 
 
