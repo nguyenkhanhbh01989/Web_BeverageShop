@@ -321,36 +321,132 @@ p[style*="color: red"] {
 
 /* === Trang Giỏ Hàng (cart.php) === */
 
-table {
+.cart-table {
     border-collapse: collapse;
     margin: 20px auto;
     width: 100%;
     max-width: 1200px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-table th,
-table td {
-    padding: 10px;
-    border: 1px solid #EDEDED;
+.cart-table th,
+.cart-table td {
+    padding: 15px;
+    border-bottom: 1px solid #EDEDED;
+    text-align: center;
 }
 
-table th {
+.cart-table th {
     background-color: #005662;
-    /* Xanh đậm cho tiêu đề bảng */
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.cart-table input[type="number"] {
+    padding: 5px;
+    border: 1px solid #EDEDED;
+    border-radius: 5px;
+    width: 60px;
+    text-align: center;
+}
+
+.cart-table button {
+    background-color: #F47920;
+    color: #FFFFFF;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+.cart-table .remove-item {
+    color: #D32F2F;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.cart-table .remove-item:hover {
+    text-decoration: underline;
+}
+
+.cart-actions {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+.btn-primary,
+.btn-secondary {
+    display: inline-block;
+    padding: 12px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary {
+    background-color: #F47920;
     color: #FFFFFF;
 }
 
-table input[type="number"] {
-    padding: 5px;
-    border: 1px solid #EDEDED;
-    border-radius: 3px;
-    width: 60px;
+.btn-primary:hover {
+    background-color: #D95F0E;
+    transform: scale(1.05);
 }
 
-button:disabled {
+.btn-primary.disabled {
     background-color: #B0BEC5;
-    /* Xám nhạt khi vô hiệu */
     cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary {
+    background-color: #EDEDED;
+    color: #005662;
+}
+
+.btn-secondary:hover {
+    background-color: #D3D3D3;
+    transform: scale(1.05);
+}
+
+.empty-cart {
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+}
+
+.empty-cart a {
+    color: #F47920;
+    text-decoration: none;
+}
+
+.empty-cart a:hover {
+    text-decoration: underline;
+}
+
+
+/* Responsive cho cart.php */
+
+@media (max-width: 768px) {
+    .cart-table {
+        display: block;
+        overflow-x: auto;
+    }
+    .cart-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        text-align: center;
+    }
 }
 
 
