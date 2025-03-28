@@ -1,40 +1,43 @@
+/* === Tổng Quan ===
+ * - File này chứa kiểu dáng chung cho toàn bộ dự án và các trang cụ thể.
+ * - Màu chủ đạo: Cam (#F47920), Xanh đậm (#005662), Xám nhạt (#F5F6F5).
+ * - Sử dụng font Poppins (Google Fonts) để giao diện hiện đại.
+ * - Các phần được ghi chú rõ ràng theo trang: index.php, login.php, cart.php, v.v.
+ */
+
+
 /* === Kiểu Chung Cho Toàn Bộ Trang Web === */
 
-
-/* Thiết lập cơ bản cho body */
-
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', Arial, sans-serif;
+    /* Font hiện đại */
     margin: 0;
     padding: 0;
     background-color: #F5F6F5;
-    /* Xám nhạt giống BTEC FPT */
+    /* Xám nhạt nền */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
-
-/* Header chung cho tất cả các trang */
-
 header {
     background-color: #ec911c;
-    /* Xanh dương đậm của BTEC FPT */
+    /* Cam đậm cho header */
     color: #FFFFFF;
-    /* Chữ trắng */
-    padding: 20px 0;
+    padding: 15px 0;
     text-align: center;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
-    box-shadow: 0 2px 5px rgba(244, 131, 3, 0.2);
+    box-shadow: 0 2px 10px rgba(244, 131, 3, 0.3);
 }
 
 header h1 {
     margin: 0;
-    font-size: 28px;
+    font-size: 32px;
+    font-weight: 600;
 }
 
 nav {
@@ -43,10 +46,10 @@ nav {
 
 nav a {
     color: #FFFFFF;
-    /* Chữ trắng */
     text-decoration: none;
-    margin: 0 20px;
-    font-size: 18px;
+    margin: 0 15px;
+    font-size: 16px;
+    transition: color 0.3s ease;
 }
 
 nav a:hover {
@@ -54,81 +57,212 @@ nav a:hover {
     /* Cam sáng khi hover */
 }
 
-
-/* Container chính cho nội dung */
-
 main {
     padding: 20px;
     margin-top: 100px;
     flex: 1;
     background-color: #FFFFFF;
-    /* Nội dung chính trên nền trắng */
 }
-
-
-/* Footer chung cho tất cả các trang */
 
 footer {
     background-color: #db6307;
-    /* Xanh ngọc nhạt hơn header */
+    /* Cam nhạt hơn cho footer */
     color: #FFFFFF;
-    /* Chữ trắng */
     text-align: center;
-    padding: 20px 0;
+    padding: 15px 0;
+    font-size: 14px;
 }
 
 
-/* === Kiểu Cho Trang Chủ (index.php) === */
-
-
-/* Danh sách sản phẩm */
+/* === Trang Chủ (index.php) === */
 
 .product-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    /* Grid responsive */
+    gap: 30px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .product {
-    background-color: white;
-    border: 1px solid #EDEDED;
-    /* Viền xám nhạt */
-    padding: 15px;
-    width: 200px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    padding: 20px;
     text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.product:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
 .product img {
     max-width: 100%;
-    height: auto;
-    margin-bottom: 10px;
+    height: 180px;
+    object-fit: cover;
+    /* Ảnh đẹp, không bị méo */
+    border-radius: 8px;
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
+}
+
+.product:hover img {
+    transform: scale(1.05);
+    /* Zoom nhẹ khi hover */
 }
 
 .product h3 {
-    font-size: 18px;
+    font-size: 20px;
     margin: 10px 0;
     color: #005662;
-    /* Xanh dương đậm cho tiêu đề */
+    /* Xanh đậm cho tiêu đề */
+    font-weight: 600;
+}
+
+.product h3 a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.product h3 a:hover {
+    color: #F47920;
+    /* Cam sáng khi hover */
 }
 
 .product p {
     font-size: 14px;
-    color: #555;
+    color: #666;
+    margin: 5px 0;
+}
+
+.product button {
+    background-color: #F47920;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    /* Nút tròn hiện đại */
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.product button:hover {
+    background-color: #D95F0E;
+    /* Cam đậm khi hover */
+    transform: scale(1.05);
 }
 
 
-/* === Kiểu Cho Trang Đăng Nhập (login.php) === */
+/* Floating Cart Icon (index.php, dùng chung) */
+
+.cart-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #F47920;
+    color: #FFFFFF;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    font-size: 24px;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.cart-icon:hover {
+    transform: scale(1.1);
+}
+
+.cart-icon .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #D32F2F;
+    /* Đỏ cho badge */
+    color: #FFFFFF;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
 
 
-/* Form đăng nhập */
+/* Hiệu ứng rung khi thêm sản phẩm (index.php, dùng chung) */
+
+.cart-icon.active {
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+
+/* Toast Notification (index.php, dùng chung) */
+
+.toast {
+    position: fixed;
+    bottom: 80px;
+    /* Cách biểu tượng giỏ 60px */
+    right: 20px;
+    background-color: #28A745;
+    /* Xanh lá cho thông báo */
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    z-index: 2000;
+    opacity: 0;
+    transform: translateY(20px);
+    /* Bắt đầu thấp hơn */
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    max-width: 300px;
+    /* Giới hạn chiều rộng */
+    font-size: 14px;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+    /* Trượt lên khi hiển thị */
+}
+
+
+/* === Trang Đăng Nhập/Đăng Ký (login.php, register.php) === */
 
 form {
     max-width: 400px;
     margin: 20px auto;
     padding: 20px;
-    background-color: white;
+    background-color: #FFFFFF;
     border: 1px solid #EDEDED;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -139,11 +273,12 @@ label {
     margin-bottom: 5px;
     font-weight: bold;
     color: #005662;
-    /* Xanh dương đậm cho nhãn */
+    /* Xanh đậm cho nhãn */
 }
 
 input[type="text"],
-input[type="password"] {
+input[type="password"],
+input[type="email"] {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
@@ -152,10 +287,17 @@ input[type="password"] {
     box-sizing: border-box;
 }
 
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus {
+    border-color: #F47920;
+    outline: none;
+    box-shadow: 0 0 5px rgba(244, 121, 32, 0.5);
+}
+
 button {
     background-color: #F47920;
-    /* Cam sáng của BTEC FPT */
-    color: white;
+    color: #FFFFFF;
     padding: 10px 15px;
     border: none;
     border-radius: 5px;
@@ -165,7 +307,7 @@ button {
 
 button:hover {
     background-color: #D95F0E;
-    /* Cam đậm hơn khi hover */
+    /* Cam đậm khi hover */
 }
 
 
@@ -177,61 +319,13 @@ p[style*="color: red"] {
 }
 
 
-/* === Kiểu Cho Trang Quản Trị (admin/dashboard.php) === */
-
-.admin-menu {
-    margin: 20px 0;
-}
-
-.admin-menu ul {
-    list-style: none;
-    padding: 0;
-}
-
-.admin-menu li {
-    margin: 10px 0;
-}
-
-.admin-menu a {
-    text-decoration: none;
-    color: #005662;
-    /* Xanh dương đậm */
-    font-weight: bold;
-}
-
-.admin-menu a:hover {
-    color: #F47920;
-    /* Cam sáng khi hover */
-}
-
-.notification {
-    background-color: #F47920;
-    /* Cam sáng */
-    color: #FFFFFF;
-    /* Chữ trắng */
-    padding: 10px;
-    margin: 10px 0;
-    text-align: center;
-    border-radius: 5px;
-    font-weight: bold;
-}
-
-.notification a {
-    color: #FFFFFF;
-    text-decoration: underline;
-}
-
-.notification a:hover {
-    color: #EDEDED;
-    /* Xám nhạt khi hover */
-}
-
-
-/* === Kiểu Cho Trang Giỏ Hàng (cart.php) === */
+/* === Trang Giỏ Hàng (cart.php) === */
 
 table {
     border-collapse: collapse;
     margin: 20px auto;
+    width: 100%;
+    max-width: 1200px;
 }
 
 table th,
@@ -242,37 +336,15 @@ table td {
 
 table th {
     background-color: #005662;
-    /* Xanh dương đậm cho tiêu đề bảng */
-    color: white;
+    /* Xanh đậm cho tiêu đề bảng */
+    color: #FFFFFF;
 }
 
 table input[type="number"] {
     padding: 5px;
     border: 1px solid #EDEDED;
     border-radius: 3px;
-}
-
-.payment-options {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #F5F6F5;
-    /* Xám nhạt */
-    border-radius: 5px;
-}
-
-.payment-options h3 {
-    margin: 0 0 10px 0;
-    color: #005662;
-    /* Xanh dương đậm */
-}
-
-.payment-options label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.payment-options input[type="radio"] {
-    margin-right: 5px;
+    width: 60px;
 }
 
 button:disabled {
@@ -282,13 +354,65 @@ button:disabled {
 }
 
 
-/* === Kiểu Cho Trang Chi Tiết Sản Phẩm (product_detail.php) === */
+/* === Trang Thanh Toán (checkout.php) === */
+
+.payment-options,
+.shipping-info {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #F5F6F5;
+    /* Xám nhạt */
+    border-radius: 5px;
+}
+
+.payment-options h3,
+.shipping-info h3 {
+    margin: 0 0 10px 0;
+    color: #005662;
+    /* Xanh đậm */
+}
+
+.payment-options label,
+.shipping-info label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.payment-options input[type="radio"] {
+    margin-right: 5px;
+}
+
+.shipping-info input[type="text"],
+.shipping-info textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #EDEDED;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+
+/* === Trang Lịch Sử Đơn Hàng (order_history.php) === */
+
+.cancel-link {
+    color: #D32F2F;
+    /* Đỏ cho liên kết hủy */
+    text-decoration: none;
+}
+
+.cancel-link:hover {
+    text-decoration: underline;
+}
+
+
+/* === Trang Chi Tiết Sản Phẩm (product_detail.php) === */
 
 .product-detail {
     max-width: 600px;
     margin: 20px auto;
     padding: 20px;
-    background-color: white;
+    background-color: #FFFFFF;
     border: 1px solid #EDEDED;
     border-radius: 5px;
     text-align: center;
@@ -308,24 +432,124 @@ button:disabled {
 .product-detail button {
     margin-top: 20px;
     background-color: #F47920;
-    /* Cam sáng */
-    color: white;
+    color: #FFFFFF;
 }
 
 .product-detail button:hover {
     background-color: #D95F0E;
-    /* Cam đậm hơn khi hover */
 }
 
 
-/* oderhistori  */
+/* === Trang Quản Trị (admin/dashboard.php, orders.php, products.php, users.php) === */
 
-.cancel-link {
-    color: #D32F2F;
-    /* Đỏ */
+.admin-menu {
+    margin: 20px 0;
+}
+
+.admin-menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.admin-menu li {
+    margin: 10px 0;
+}
+
+.admin-menu a {
     text-decoration: none;
+    color: #005662;
+    font-weight: bold;
 }
 
-.cancel-link:hover {
+.admin-menu a:hover {
+    color: #F47920;
+}
+
+.notification {
+    background-color: #F47920;
+    color: #FFFFFF;
+    padding: 10px;
+    margin: 10px 0;
+    text-align: center;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.notification a {
+    color: #FFFFFF;
     text-decoration: underline;
+}
+
+.notification a:hover {
+    color: #EDEDED;
+}
+
+
+/* === Responsive Design === */
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 24px;
+    }
+    nav a {
+        margin: 0 10px;
+        font-size: 14px;
+    }
+    .product-list {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        padding: 10px;
+    }
+    .product {
+        padding: 15px;
+    }
+    .product img {
+        height: 150px;
+    }
+    table {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-list {
+        grid-template-columns: 1fr;
+    }
+    .product {
+        width: 100%;
+    }
+    .cart-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+    .cart-icon .badge {
+        width: 16px;
+        height: 16px;
+        font-size: 10px;
+    }
+    .toast {
+        bottom: 70px;
+        right: 10px;
+        max-width: 80%;
+    }
+}
+
+
+/* === Animation Chung === */
+
+.success-message {
+    text-align: center;
+    color: #28A745;
+    font-weight: bold;
+    margin-bottom: 20px;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
