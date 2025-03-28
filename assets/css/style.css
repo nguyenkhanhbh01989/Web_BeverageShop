@@ -452,30 +452,51 @@ p[style*="color: red"] {
 
 /* === Trang Thanh Toán (checkout.php) === */
 
-.payment-options,
-.shipping-info {
-    margin-top: 20px;
+.checkout-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 20px auto;
+    gap: 30px;
+}
+
+.checkout-items,
+.checkout-form {
+    flex: 1;
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.checkout-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.checkout-table th,
+.checkout-table td {
     padding: 15px;
-    background-color: #F5F6F5;
-    /* Xám nhạt */
-    border-radius: 5px;
+    border-bottom: 1px solid #EDEDED;
+    text-align: center;
 }
 
-.payment-options h3,
-.shipping-info h3 {
-    margin: 0 0 10px 0;
+.checkout-table th {
+    background-color: #005662;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.checkout-form h3 {
     color: #005662;
-    /* Xanh đậm */
+    margin-bottom: 15px;
 }
 
-.payment-options label,
-.shipping-info label {
+.shipping-info label,
+.payment-options label {
     display: block;
-    margin-bottom: 10px;
-}
-
-.payment-options input[type="radio"] {
-    margin-right: 5px;
+    margin-bottom: 15px;
+    color: #555;
 }
 
 .shipping-info input[type="text"],
@@ -486,6 +507,49 @@ p[style*="color: red"] {
     border: 1px solid #EDEDED;
     border-radius: 5px;
     box-sizing: border-box;
+}
+
+.shipping-info textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.payment-options input[type="radio"] {
+    margin-right: 10px;
+}
+
+.checkout-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.error-message {
+    text-align: center;
+    color: #D32F2F;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+
+/* Responsive cho checkout.php */
+
+@media (max-width: 768px) {
+    .checkout-container {
+        flex-direction: column;
+    }
+    .checkout-items,
+    .checkout-form {
+        width: 100%;
+    }
+    .checkout-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+    }
 }
 
 
@@ -505,34 +569,101 @@ p[style*="color: red"] {
 /* === Trang Chi Tiết Sản Phẩm (product_detail.php) === */
 
 .product-detail {
-    max-width: 600px;
+    max-width: 800px;
     margin: 20px auto;
-    padding: 20px;
+    padding: 30px;
     background-color: #FFFFFF;
-    border: 1px solid #EDEDED;
-    border-radius: 5px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    align-items: center;
 }
 
 .product-detail img {
     max-width: 100%;
+    width: 350px;
     height: auto;
-    margin-bottom: 20px;
+    border-radius: 10px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
 }
 
-.product-detail p {
+.product-detail:hover img {
+    transform: scale(1.05);
+}
+
+.product-detail h2 {
+    font-size: 28px;
+    color: #005662;
     margin: 10px 0;
-    color: #555;
+    font-weight: 600;
+    width: 100%;
 }
 
-.product-detail button {
-    margin-top: 20px;
-    background-color: #F47920;
-    color: #FFFFFF;
+.product-detail .category,
+.product-detail .size {
+    font-size: 16px;
+    color: #666;
+    margin: 5px 0;
 }
 
-.product-detail button:hover {
-    background-color: #D95F0E;
+.product-detail .price {
+    font-size: 22px;
+    color: #F47920;
+    font-weight: 500;
+    margin: 10px 0;
+}
+
+.product-detail .stock {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.product-detail .stock.in-stock {
+    color: #28A745;
+    /* Xanh lá khi còn hàng */
+}
+
+.product-detail .stock.out-stock {
+    color: #D32F2F;
+    /* Đỏ khi hết hàng */
+}
+
+.product-detail .btn-primary {
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-size: 16px;
+    width: auto;
+    display: inline-block;
+}
+
+.product-detail .btn-primary:disabled {
+    background-color: #B0BEC5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.product-detail .error-message {
+    color: #D32F2F;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+
+/* Responsive cho product_detail.php */
+
+@media (max-width: 768px) {
+    .product-detail {
+        flex-direction: column;
+        padding: 20px;
+    }
+    .product-detail img {
+        width: 100%;
+        max-width: 300px;
+    }
 }
 
 
