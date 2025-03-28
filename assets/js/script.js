@@ -74,12 +74,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    const successMessage = document.querySelector('.success-message');
-    if (successMessage && successMessage.getAttribute('data-message')) {
-        const message = successMessage.getAttribute('data-message');
-        showToast(message);
+    // login.php & register.php: Thông báo lỗi/thành công
+    const authForm = document.querySelector('.auth-form');
+    if (authForm) {
+        authForm.addEventListener('submit', function() {
+            showToast('Đang xử lý...');
+        });
+
+        const errorMessage = document.querySelector('.error-message');
+        if (errorMessage && errorMessage.getAttribute('data-message')) {
+            const message = errorMessage.getAttribute('data-message');
+            showToast(message);
+        }
+
+        const successMessage = document.querySelector('.success-message');
+        if (successMessage && successMessage.getAttribute('data-message')) {
+            const message = successMessage.getAttribute('data-message');
+            showToast(message);
+        }
     }
 
+    // order_history.php: Modal
     const modal = document.getElementById('order-modal');
     const closeModal = document.querySelector('.close-modal');
     const orderDetails = document.getElementById('order-details');
@@ -93,9 +108,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    closeModal.addEventListener('click', function() {
-        modal.style.display = 'none';
-    });
+    if (closeModal) {
+        closeModal.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+    }
 
     window.addEventListener('click', function(e) {
         if (e.target === modal) {
@@ -104,7 +121,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function fetchOrderDetails(orderId) {
-        // Giả lập dữ liệu chi tiết (thay bằng Ajax nếu cần)
         const dummyDetails = `
             <table>
                 <thead>
@@ -117,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </table>
             <p><strong>Tổng cộng: 95,000 VND</strong></p>
         `;
-        orderDetails.innerHTML = dummyDetails; // Thay bằng Ajax thực tế
+        orderDetails.innerHTML = dummyDetails; // Thay bằng Ajax nếu cần
     }
 
     // Hàm hiển thị toast
@@ -127,11 +143,3 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => toast.classList.remove('show'), 2000);
     }
 });
-// Hiện tại dùng dữ liệu giả trong fetchOrderDetails.Nếu muốn lấy dữ
-//  liệu thực từ database, cần tạo file PHP(ví dụ: get_order_details.php) và dùng Ajax:
-
-function fetchOrderDetails(orderId) {
-    fetch(`get_order_details.php?id=${orderId}`)
-        .then(response => response.text())
-        .then(data => orderDetails.innerHTML = data);
-}
