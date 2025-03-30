@@ -1,0 +1,379 @@
+/* 
+ * File: admin.css
+ * Mục đích: Định nghĩa kiểu dáng cho các trang quản trị trong thư mục admin/ (dashboard.php, orders.php, products.php, users.php).
+ * Sử dụng: Nạp trong các file PHP trong admin/ cùng với global.css.
+ * Gộp lại khi triển khai: Kết hợp với global.css và các file khác.
+ */
+
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    margin-top: 50px;
+    width: 250px;
+    background-color: #003D47;
+    color: #FFFFFF;
+    padding: 20px;
+    position: fixed;
+    height: 100%;
+    transition: transform 0.3s ease;
+}
+
+.sidebar h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.sidebar nav a {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 16px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar nav a i {
+    margin-right: 10px;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.active {
+    background-color: #F47920;
+}
+
+.admin-content {
+    flex: 1;
+    padding: 20px;
+    margin-left: 300px;
+    background-color: #F5F6F5;
+}
+
+.admin-content header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.admin-content h1 {
+    text-align: left;
+    padding-left: 30px;
+}
+
+.admin-content h1 {
+    font-size: 28px;
+    color: #005662;
+}
+
+.hamburger {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #005662;
+}
+
+
+/* Dashboard */
+
+.welcome {
+    margin-bottom: 20px;
+}
+
+.welcome h2 {
+    font-size: 24px;
+    color: #005662;
+}
+
+.welcome p {
+    font-size: 16px;
+    color: #555;
+}
+
+.notification {
+    background-color: #FFF3E0;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 20px 0;
+    color: #F47920;
+    font-weight: 500;
+}
+
+.notification a {
+    color: #005662;
+    text-decoration: underline;
+}
+
+.notification a:hover {
+    color: #003D47;
+}
+
+.dashboard-stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.stat-card {
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+}
+
+.stat-card h3 {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.stat-card p {
+    font-size: 24px;
+    color: #F47920;
+    font-weight: 600;
+}
+
+
+/* Admin Table */
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 15px;
+    border-bottom: 1px solid #EDEDED;
+    text-align: center;
+}
+
+.admin-table th {
+    background-color: #005662;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.admin-table .status-processing {
+    color: #F47920;
+}
+
+.admin-table .status-completed {
+    color: #28A745;
+}
+
+.admin-table .status-cancelled {
+    color: #D32F2F;
+}
+
+.admin-table .view-details {
+    background-color: #005662;
+    color: #FFFFFF;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.admin-table .view-details:hover {
+    background-color: #003D47;
+}
+
+.admin-table select {
+    padding: 5px;
+    border: 1px solid #EDEDED;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    cursor: pointer;
+}
+
+
+/* Nút hành động */
+
+.btn-action {
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin: 0 5px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.confirm-order {
+    background-color: #28A745;
+    color: #FFFFFF;
+}
+
+.confirm-order:hover {
+    background-color: #218838;
+}
+
+.reject-order {
+    background-color: #D32F2F;
+    color: #FFFFFF;
+}
+
+.reject-order:hover {
+    background-color: #C62828;
+}
+
+
+/* Products */
+
+.add-product {
+    margin: 20px 0;
+}
+
+.product-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.product-form input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex: 1;
+    min-width: 150px;
+}
+
+.product-form button {
+    background-color: #28A745;
+    color: #FFFFFF;
+    padding: 8px 15px;
+}
+
+.product-form button:hover {
+    background-color: #218838;
+}
+
+.admin-table img {
+    border-radius: 5px;
+}
+
+.edit-product {
+    background-color: #007BFF;
+    color: #FFFFFF;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-product:hover {
+    background-color: #0056B3;
+}
+
+.delete-product {
+    background-color: #D32F2F;
+    color: #FFFFFF;
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        z-index: 1000;
+    }
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    .admin-content {
+        margin-left: 0;
+    }
+    .hamburger {
+        display: block;
+    }
+    .admin-table {
+        display: block;
+        overflow-x: auto;
+    }
+    .admin-table td,
+    .admin-table th {
+        font-size: 14px;
+    }
+}
+
+
+/* Modal */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+}
+
+.modal-content {
+    background-color: #FFFFFF;
+    margin: 10% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: slideIn 0.3s ease;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+}
+
+.close-modal:hover {
+    color: #D32F2F;
+}
+
+#order-details table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#order-details table th,
+#order-details table td {
+    padding: 10px;
+    border-bottom: 1px solid #EDEDED;
+    text-align: left;
+}
+
+#order-details table th {
+    background-color: #F5F6F5;
+    color: #005662;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

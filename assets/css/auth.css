@@ -1,0 +1,84 @@
+/* 
+ * File: auth.css
+ * Mục đích: Định nghĩa kiểu dáng cho trang đăng nhập (login.php) và đăng ký (register.php).
+ * Sử dụng: Nạp trong login.php và register.php cùng với global.css.
+ * Gộp lại khi triển khai: Kết hợp với global.css và các file khác.
+ */
+
+.auth-container {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 30px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.auth-container h2 {
+    color: #005662;
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.auth-form label {
+    display: block;
+    text-align: left;
+    margin-bottom: 15px;
+    color: #555;
+    font-weight: 500;
+}
+
+.auth-form input[type="text"],
+.auth-form input[type="password"],
+.auth-form input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #EDEDED;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.auth-form input[type="text"]:focus,
+.auth-form input[type="password"]:focus,
+.auth-form input[type="email"]:focus {
+    border-color: #F47920;
+    box-shadow: 0 0 5px rgba(244, 121, 32, 0.5);
+    outline: none;
+}
+
+.auth-form .btn-primary {
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-size: 16px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.auth-link {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #666;
+}
+
+.auth-link a {
+    color: #F47920;
+    text-decoration: none;
+}
+
+.auth-link a:hover {
+    text-decoration: underline;
+}
+
+
+/* Responsive */
+
+@media (max-width: 480px) {
+    .auth-container {
+        width: 90%;
+        padding: 20px;
+    }
+}

@@ -16,7 +16,7 @@ if (isset($_GET['cancel'])) {
     $stmt->execute([':order_id' => $order_id, ':user_id' => $user_id]);
     $order = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($order && $order['status'] == 'Processing') {
+    if ($order && in_array($order['status'], ['pending', 'Processing'])) { // Cho phép hủy cả pending và Processing
         $stmt = $conn->prepare("UPDATE orders SET status = 'Cancelled' WHERE order_id = :order_id");
         $stmt->execute([':order_id' => $order_id]);
 
@@ -57,6 +57,8 @@ if (!empty($_SESSION['cart'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lịch Sử Đơn Hàng - Cửa Hàng Đồ Uống</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/order_history.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -96,12 +98,11 @@ if (!empty($_SESSION['cart'])) {
                             <td><?php echo date('d/m/Y H:i', strtotime($order['order_date'])); ?></td>
                             <td><?php echo number_format($order['total_amount'], 0, ',', '.') . ' VND'; ?></td>
                             <td class="status status-<?php echo strtolower($order['status']); ?>">
-                                <?php echo $order['status'] == 'Processing' ? 'Đang xử lý' : 
-                                          ($order['status'] == 'Completed' ? 'Hoàn thành' : 'Đã hủy'); ?>
+                                <?php echo htmlspecialchars($order['status']); ?>
                             </td>
                             <td>
                                 <button class="view-details" data-order-id="<?php echo $order['order_id']; ?>">Xem chi tiết</button>
-                                <?php if ($order['status'] == 'Processing'): ?>
+                                <?php if (in_array($order['status'], ['pending', 'Processing'])): ?>
                                     <a href="?cancel=<?php echo $order['order_id']; ?>" class="cancel-order">Hủy đơn</a>
                                 <?php endif; ?>
                             </td>
@@ -115,7 +116,7 @@ if (!empty($_SESSION['cart'])) {
     <!-- Modal Chi Tiết Đơn Hàng -->
     <div class="modal" id="order-modal">
         <div class="modal-content">
-            <span class="close-modal">&times;</span>
+            <span class="close-modal">×</span>
             <h3>Chi Tiết Đơn Hàng</h3>
             <div id="order-details"></div>
         </div>
@@ -133,7 +134,7 @@ if (!empty($_SESSION['cart'])) {
     <footer>
         <p>© 2025 Cửa Hàng Đồ Uống</p>
     </footer>
-
-    <script src="assets/js/script.js"></script>
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/order_history.js"></script>
 </body>
 </html>

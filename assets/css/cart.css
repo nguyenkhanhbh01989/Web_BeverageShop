@@ -1,0 +1,98 @@
+/* 
+ * File: cart.css
+ * Mục đích: Định nghĩa kiểu dáng cho trang giỏ hàng (cart.php).
+ * Sử dụng: Nạp trong cart.php cùng với global.css.
+ * Gộp lại khi triển khai: Kết hợp với global.css và các file khác.
+ */
+
+.cart-table {
+    border-collapse: collapse;
+    margin: 20px auto;
+    width: 100%;
+    max-width: 1200px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.cart-table th,
+.cart-table td {
+    padding: 15px;
+    border-bottom: 1px solid #EDEDED;
+    text-align: center;
+}
+
+.cart-table th {
+    background-color: #005662;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.cart-table input[type="number"] {
+    padding: 5px;
+    border: 1px solid #EDEDED;
+    border-radius: 5px;
+    width: 60px;
+    text-align: center;
+}
+
+.cart-table button {
+    background-color: #F47920;
+    color: #FFFFFF;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+.cart-table .remove-item {
+    color: #D32F2F;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.cart-table .remove-item:hover {
+    text-decoration: underline;
+}
+
+.cart-actions {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+.empty-cart {
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+}
+
+.empty-cart a {
+    color: #F47920;
+    text-decoration: none;
+}
+
+.empty-cart a:hover {
+    text-decoration: underline;
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .cart-table {
+        display: block;
+        overflow-x: auto;
+    }
+    .cart-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        text-align: center;
+    }
+}

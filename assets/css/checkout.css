@@ -1,0 +1,106 @@
+/* 
+ * File: checkout.css
+ * Mục đích: Định nghĩa kiểu dáng cho trang thanh toán (checkout.php).
+ * Sử dụng: Nạp trong checkout.php cùng với global.css.
+ * Gộp lại khi triển khai: Kết hợp với global.css và các file khác.
+ */
+
+.checkout-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 20px auto;
+    gap: 30px;
+}
+
+.checkout-items,
+.checkout-form {
+    flex: 1;
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.checkout-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.checkout-table th,
+.checkout-table td {
+    padding: 15px;
+    border-bottom: 1px solid #EDEDED;
+    text-align: center;
+}
+
+.checkout-table th {
+    background-color: #005662;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.checkout-form h3 {
+    color: #005662;
+    margin-bottom: 15px;
+}
+
+.shipping-info label,
+.payment-options label {
+    display: block;
+    margin-bottom: 15px;
+    color: #555;
+}
+
+.shipping-info input[type="text"],
+.shipping-info textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #EDEDED;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.shipping-info textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.payment-options input[type="radio"] {
+    margin-right: 10px;
+}
+
+.checkout-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.error-message {
+    text-align: center;
+    color: #D32F2F;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .checkout-container {
+        flex-direction: column;
+    }
+    .checkout-items,
+    .checkout-form {
+        width: 100%;
+    }
+    .checkout-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+    }
+}

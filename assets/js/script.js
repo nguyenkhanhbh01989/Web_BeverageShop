@@ -1,3 +1,16 @@
+//gộp lại các file css
+// const gulp = require('gulp');
+// const concat = require('gulp-concat');
+// const cleanCSS = require('gulp-clean-css');
+
+// gulp.task('css', function() {
+//     return gulp.src('assets/css/*.css')
+//         .pipe(concat('all.min.css'))
+//         .pipe(cleanCSS())
+//         .pipe(gulp.dest('assets/css/dist'));
+// });
+
+
 document.addEventListener('DOMContentLoaded', function() {
     const cartIcon = document.querySelector('.cart-icon');
     const toast = document.getElementById('toast');
@@ -62,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // order_history.php: Hủy đơn & Modal
+    // order_history.php & admin/orders.php: Hủy đơn & Modal
     const cancelLinks = document.querySelectorAll('.cancel-order');
     cancelLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -83,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const errorMessage = document.querySelector('.error-message');
         if (errorMessage && errorMessage.getAttribute('data-message')) {
-            const message = errorMessage.getAttribute('data-message');
+            const message = errorMessage.getAttribute('data JUDGEessage');
             showToast(message);
         }
 
@@ -94,7 +107,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // order_history.php: Modal
+    // admin/orders.php: Cập nhật trạng thái
+    const statusForms = document.querySelectorAll('.status-form');
+    statusForms.forEach(form => {
+        form.addEventListener('submit', function() {
+            showToast('Đang cập nhật trạng thái...');
+        });
+    });
+
+    // Modal cho order_history.php & admin/orders.php
     const modal = document.getElementById('order-modal');
     const closeModal = document.querySelector('.close-modal');
     const orderDetails = document.getElementById('order-details');
@@ -121,19 +142,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function fetchOrderDetails(orderId) {
-        const dummyDetails = `
-            <table>
-                <thead>
-                    <tr><th>Sản phẩm</th><th>Số lượng</th><th>Giá</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>Trà Sữa Trân Châu</td><td>2</td><td>60,000 VND</td></tr>
-                    <tr><td>Cà Phê Sữa</td><td>1</td><td>35,000 VND</td></tr>
-                </tbody>
-            </table>
-            <p><strong>Tổng cộng: 95,000 VND</strong></p>
-        `;
-        orderDetails.innerHTML = dummyDetails; // Thay bằng Ajax nếu cần
+        fetch(`get_order_details.php?id=${orderId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Lỗi mạng hoặc phản hồi không thành công');
+                }
+                return response.text();
+            })
+            .then(data => {
+                orderDetails.innerHTML = data;
+            })
+            .catch(error => {
+                orderDetails.innerHTML = 'Lỗi khi tải chi tiết đơn hàng!';
+                console.error('Error:', error);
+            });
     }
 
     // Hàm hiển thị toast

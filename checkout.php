@@ -2,6 +2,7 @@
 session_start();
 include 'includes/db_connect.php';
 
+// Kiểm tra nếu người dùng chưa đăng nhập
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
@@ -12,11 +13,12 @@ $user_id = $_SESSION['user_id'];
 // Xử lý đặt hàng
 if (isset($_POST['place_order'])) {
     $payment_method = $_POST['payment_method'];
-    $total_amount = $_POST['total_amount'];
     $address = $_POST['address'];
     $note = $_POST['note'];
     $error = false;
 
+    // Tính tổng tiền từ giỏ hàng
+    $total_amount = 0;
     foreach ($_SESSION['cart'] as $product_id => $item) {
         $stmt = $conn->prepare("SELECT stock, price FROM products WHERE product_id = :id");
         $stmt->execute([':id' => $product_id]);
@@ -24,6 +26,7 @@ if (isset($_POST['place_order'])) {
 
         if ($product && $product['stock'] >= $item['quantity'] && $product['stock'] > 0) {
             $_SESSION['cart'][$product_id]['price'] = $product['price'];
+            $total_amount += $product['price'] * $item['quantity'];
         } else {
             $error = true;
             $error_msg = "Sản phẩm '{$item['name']}' không đủ hàng (tồn kho: {$product['stock']}).";
@@ -31,12 +34,14 @@ if (isset($_POST['place_order'])) {
         }
     }
 
+    // Nếu không có lỗi, đặt hàng
     if (!$error && $total_amount > 0) {
         try {
             $conn->beginTransaction();
 
-            $stmt = $conn->prepare("INSERT INTO orders (user_id, total_amount, payment_method, address, note) 
-                                    VALUES (:user_id, :total_amount, :payment_method, :address, :note)");
+            // Chèn đơn hàng với trạng thái 'pending'
+            $stmt = $conn->prepare("INSERT INTO orders (user_id, total_amount, status, payment_method, address, note, order_date) 
+                                    VALUES (:user_id, :total_amount, 'pending', :payment_method, :address, :note, NOW())");
             $stmt->execute([
                 ':user_id' => $user_id,
                 ':total_amount' => $total_amount,
@@ -46,6 +51,7 @@ if (isset($_POST['place_order'])) {
             ]);
             $order_id = $conn->lastInsertId();
 
+            // Chèn chi tiết đơn hàng
             $stmt = $conn->prepare("INSERT INTO order_details (order_id, product_id, quantity, price) 
                                     VALUES (:order_id, :product_id, :quantity, :price)");
             $update_stock = $conn->prepare("UPDATE products SET stock = stock - :quantity WHERE product_id = :product_id");
@@ -70,6 +76,8 @@ if (isset($_POST['place_order'])) {
             $conn->rollBack();
             $error_msg = "Lỗi khi đặt hàng: " . $e->getMessage();
         }
+    } else if (!$error) {
+        $error_msg = "Tổng tiền đơn hàng không hợp lệ!";
     }
 }
 
@@ -89,6 +97,8 @@ if (!empty($_SESSION['cart'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xác Nhận Đơn Hàng - Cửa Hàng Đồ Uống</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/checkout.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -106,10 +116,10 @@ if (!empty($_SESSION['cart'])) {
     <main>
         <h2>Xác Nhận Đơn Hàng</h2>
         <?php if (isset($error_msg)): ?>
-            <p class="error-message"><?php echo $error_msg; ?></p>
+            <p class="error-message" style="display: none;" data-message="<?php echo htmlspecialchars($error_msg); ?>"></p>
         <?php endif; ?>
         <?php if (isset($success)): ?>
-            <p class="success-message" data-message="<?php echo $success; ?>"></p>
+            <p class="success-message" style="display: none;" data-message="<?php echo htmlspecialchars($success); ?>"></p>
         <?php else: ?>
             <?php if (empty($_SESSION['cart'])): ?>
                 <p class="empty-cart">Giỏ hàng của bạn đang trống! Vui lòng quay lại <a href="cart.php">Giỏ hàng</a>.</p>
@@ -191,7 +201,7 @@ if (!empty($_SESSION['cart'])) {
     <footer>
         <p>© 2025 Cửa Hàng Đồ Uống</p>
     </footer>
-
-    <script src="assets/js/script.js"></script>
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/checkout.js"></script>
 </body>
 </html>

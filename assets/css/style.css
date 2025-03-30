@@ -1,4 +1,4 @@
-/* === Tổng Quan ===
+/* /* === Tổng Quan ===
  * - File này chứa kiểu dáng chung cho toàn bộ dự án và các trang cụ thể.
  * - Màu chủ đạo: Cam (#F47920), Xanh đậm (#005662), Xám nhạt (#F5F6F5).
  * - Sử dụng font Poppins (Google Fonts) để giao diện hiện đại.
@@ -847,46 +847,307 @@ footer {
 
 /* === Trang Quản Trị (admin/dashboard.php, orders.php, products.php, users.php) === */
 
-.admin-menu {
-    margin: 20px 0;
+.welcome {
+    margin-bottom: 20px;
 }
 
-.admin-menu ul {
-    list-style: none;
-    padding: 0;
-}
-
-.admin-menu li {
-    margin: 10px 0;
-}
-
-.admin-menu a {
-    text-decoration: none;
+.welcome h2 {
+    font-size: 24px;
     color: #005662;
-    font-weight: bold;
 }
 
-.admin-menu a:hover {
-    color: #F47920;
+.welcome p {
+    font-size: 16px;
+    color: #555;
 }
 
 .notification {
-    background-color: #F47920;
-    color: #FFFFFF;
-    padding: 10px;
-    margin: 10px 0;
-    text-align: center;
+    background-color: #FFF3E0;
+    padding: 15px;
     border-radius: 5px;
-    font-weight: bold;
+    margin: 20px 0;
+    color: #F47920;
+    font-weight: 500;
 }
 
 .notification a {
-    color: #FFFFFF;
+    color: #005662;
     text-decoration: underline;
 }
 
 .notification a:hover {
-    color: #EDEDED;
+    color: #003D47;
+}
+
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #003D47;
+    color: #FFFFFF;
+    padding: 20px;
+    position: fixed;
+    height: 100%;
+    transition: transform 0.3s ease;
+}
+
+.sidebar h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.sidebar nav a {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 16px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar nav a i {
+    margin-right: 10px;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.active {
+    background-color: #F47920;
+}
+
+.admin-content {
+    flex: 1;
+    padding: 20px;
+    margin-left: 250px;
+    background-color: #F5F6F5;
+}
+
+.admin-content header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.admin-content h1 {
+    font-size: 28px;
+    color: #005662;
+}
+
+.hamburger {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #005662;
+}
+
+.dashboard-stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.stat-card {
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+}
+
+.stat-card h3 {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.stat-card p {
+    font-size: 24px;
+    color: #F47920;
+    font-weight: 600;
+}
+
+
+/* Responsive cho admin */
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        z-index: 1000;
+    }
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    .admin-content {
+        margin-left: 0;
+    }
+    .hamburger {
+        display: block;
+    }
+}
+
+
+/* === Admin Table === */
+
+
+/* kiểu cho xác nhận và từ chối đơn hàng */
+
+.btn-action {
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin: 0 5px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.confirm-order {
+    background-color: #28A745;
+    color: #FFFFFF;
+}
+
+.confirm-order:hover {
+    background-color: #218838;
+}
+
+.reject-order {
+    background-color: #D32F2F;
+    color: #FFFFFF;
+}
+
+.reject-order:hover {
+    background-color: #C62828;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 15px;
+    border-bottom: 1px solid #EDEDED;
+    text-align: center;
+}
+
+.admin-table th {
+    background-color: #005662;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.admin-table .status-processing {
+    color: #F47920;
+}
+
+.admin-table .status-completed {
+    color: #28A745;
+}
+
+.admin-table .status-cancelled {
+    color: #D32F2F;
+}
+
+.admin-table .view-details {
+    background-color: #005662;
+    color: #FFFFFF;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.admin-table .view-details:hover {
+    background-color: #003D47;
+}
+
+.admin-table select {
+    padding: 5px;
+    border: 1px solid #EDEDED;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    cursor: pointer;
+}
+
+
+/* bảng products.php */
+
+.add-product {
+    margin: 20px 0;
+}
+
+.product-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.product-form input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex: 1;
+    min-width: 150px;
+}
+
+.product-form button {
+    background-color: #28A745;
+    color: #FFFFFF;
+    padding: 8px 15px;
+}
+
+.product-form button:hover {
+    background-color: #218838;
+}
+
+.admin-table img {
+    border-radius: 5px;
+}
+
+.edit-product {
+    background-color: #007BFF;
+    color: #FFFFFF;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-product:hover {
+    background-color: #0056B3;
+}
+
+.delete-product {
+    background-color: #D32F2F;
+    color: #FFFFFF;
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .admin-table {
+        display: block;
+        overflow-x: auto;
+    }
+    .admin-table td,
+    .admin-table th {
+        font-size: 14px;
+    }
 }
 
 

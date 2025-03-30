@@ -1,169 +1,244 @@
 <?php
-// Xử lý thêm sản phẩm
-if (isset($_POST['add_product'])) {
-    $product_name = $_POST['product_name'];
-    $price = $_POST['price'];
-    $size = $_POST['size'];
-    $flavor = $_POST['flavor'];
-    $stock = $_POST['stock'];
-    $category_id = $_POST['category_id'];
-    $image = $_POST['image'];
-    $description = $_POST['description'];
+session_start();
+include '../includes/db_connect.php';
 
-    $stmt = $conn->prepare("INSERT INTO products (product_name, price, size, flavor, stock, category_id, image, description) 
-                            VALUES (:name, :price, :size, :flavor, :stock, :category_id, :image, :description)");
-    $stmt->execute([
-        ':name' => $product_name,
-        ':price' => $price,
-        ':size' => $size,
-        ':flavor' => $flavor,
-        ':stock' => $stock,
-        ':category_id' => $category_id,
-        ':image' => $image,
-        ':description' => $description
-    ]);
-    $success = "Thêm sản phẩm thành công!";
+// Kiểm tra phân quyền
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'staff'])) {
+    header("Location: ../login.php");
+    exit();
 }
 
-// Xử lý cập nhật sản phẩm
-if (isset($_POST['update_product'])) {
-    $product_id = $_POST['product_id'];
-    $product_name = $_POST['product_name'];
-    $price = $_POST['price'];
-    $size = $_POST['size'];
-    $flavor = $_POST['flavor'];
-    $stock = $_POST['stock'];
-    $category_id = $_POST['category_id'];
-    $image = $_POST['image'];
-    $description = $_POST['description'];
+// Xử lý thêm sản phẩm
+if (isset($_POST['add_product'])) {
+    $name = $_POST['name'] ?? '';
+    $price = $_POST['price'] ?? 0;
+    $stock = $_POST['stock'] ?? 0;
+    $category_id = $_POST['category_id'] ?? 1; // Mặc định category_id = 1 nếu không có bảng categories
+    $image = $_FILES['image']['name'] ?? '';
 
-    $stmt = $conn->prepare("UPDATE products SET product_name = :name, price = :price, size = :size, flavor = :flavor, 
-                            stock = :stock, category_id = :category_id, image = :image, description = :description 
-                            WHERE product_id = :id");
-    $stmt->execute([
-        ':id' => $product_id,
-        ':name' => $product_name,
-        ':price' => $price,
-        ':size' => $size,
-        ':flavor' => $flavor,
-        ':stock' => $stock,
-        ':category_id' => $category_id,
-        ':image' => $image,
-        ':description' => $description
-    ]);
-    $success = "Cập nhật sản phẩm thành công!";
+    if ($name && $price > 0 && $stock >= 0) {
+        // Xử lý upload hình ảnh
+        if ($image) {
+            $target_dir = "../assets/images/";
+            $target_file = $target_dir . basename($image);
+            move_uploaded_file($_FILES['image']['tmp_name'], $target_file);
+        }
+
+        $stmt = $conn->prepare("INSERT INTO products (product_name, price, stock, category_id, image) 
+                                VALUES (:name, :price, :stock, :category_id, :image)");
+        $result = $stmt->execute([
+            ':name' => $name,
+            ':price' => $price,
+            ':stock' => $stock,
+            ':category_id' => $category_id,
+            ':image' => $image
+        ]);
+
+        if ($result) {
+            $success = "Đã thêm sản phẩm '$name' thành công!";
+        } else {
+            $error = "Lỗi khi thêm sản phẩm!";
+        }
+    } else {
+        $error = "Vui lòng điền đầy đủ thông tin hợp lệ!";
+    }
+}
+
+// Xử lý sửa sản phẩm
+if (isset($_POST['edit_product'])) {
+    $product_id = $_POST['product_id'] ?? 0;
+    $name = $_POST['name'] ?? '';
+    $price = $_POST['price'] ?? 0;
+    $stock = $_POST['stock'] ?? 0;
+    $category_id = $_POST['category_id'] ?? 1;
+    $image = $_FILES['image']['name'] ?? null;
+
+    if ($product_id && $name && $price > 0 && $stock >= 0) {
+        $stmt = $conn->prepare("SELECT image FROM products WHERE product_id = :product_id");
+        $stmt->execute([':product_id' => $product_id]);
+        $current_image = $stmt->fetchColumn();
+
+        if ($image) {
+            $target_dir = "../assets/images/";
+            $target_file = $target_dir . basename($image);
+            move_uploaded_file($_FILES['image']['tmp_name'], $target_file);
+        } else {
+            $image = $current_image; // Giữ ảnh cũ nếu không upload ảnh mới
+        }
+
+        $stmt = $conn->prepare("UPDATE products SET product_name = :name, price = :price, stock = :stock, 
+                                category_id = :category_id, image = :image WHERE product_id = :product_id");
+        $result = $stmt->execute([
+            ':name' => $name,
+            ':price' => $price,
+            ':stock' => $stock,
+            ':category_id' => $category_id,
+            ':image' => $image,
+            ':product_id' => $product_id
+        ]);
+
+        if ($result) {
+            $success = "Đã cập nhật sản phẩm #$product_id thành công!";
+        } else {
+            $error = "Lỗi khi cập nhật sản phẩm!";
+        }
+    } else {
+        $error = "Vui lòng điền đầy đủ thông tin hợp lệ!";
+    }
 }
 
 // Xử lý xóa sản phẩm
 if (isset($_GET['delete_product'])) {
     $product_id = $_GET['delete_product'];
-    $stmt = $conn->prepare("DELETE FROM products WHERE product_id = :id");
-    $stmt->execute([':id' => $product_id]);
-    $success = "Xóa sản phẩm thành công!";
+    $stmt = $conn->prepare("DELETE FROM products WHERE product_id = :product_id");
+    $result = $stmt->execute([':product_id' => $product_id]);
+
+    if ($result) {
+        $success = "Đã xóa sản phẩm #$product_id thành công!";
+    } else {
+        $error = "Lỗi khi xóa sản phẩm!";
+    }
 }
-?>
 
-<h3>Quản Lý Sản Phẩm</h3>
-<?php if (isset($success)) echo "<p style='color: green;'>$success</p>"; ?>
+// Lấy danh sách sản phẩm
+$stmt = $conn->prepare("SELECT product_id, product_name, price, stock, category_id, image 
+                        FROM products 
+                        ORDER BY product_id DESC");
+$stmt->execute();
+$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-<!-- Form thêm sản phẩm -->
-<h4>Thêm Sản Phẩm Mới</h4>
-<form method="POST" action="">
-    <label for="product_name">Tên sản phẩm:</label><br>
-    <input type="text" id="product_name" name="product_name" required><br><br>
-    <label for="price">Giá (VND):</label><br>
-    <input type="number" id="price" name="price" required><br><br>
-    <label for="size">Dung tích:</label><br>
-    <input type="text" id="size" name="size" required><br><br>
-    <label for="flavor">Hương vị:</label><br>
-    <input type="text" id="flavor" name="flavor" required><br><br>
-    <label for="stock">Tồn kho:</label><br>
-    <input type="number" id="stock" name="stock" required><br><br>
-    <label for="category_id">Danh mục:</label><br>
-    <select id="category_id" name="category_id" required>
-        <?php
-        $stmt = $conn->prepare("SELECT category_id, category_name FROM categories");
-        $stmt->execute();
-        $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($categories as $category) {
-            echo "<option value='{$category['category_id']}'>{$category['category_name']}</option>";
-        }
-        ?>
-    </select><br><br>
-    <label for="image">Hình ảnh (tên file):</label><br>
-    <input type="text" id="image" name="image" required><br><br>
-    <label for="description">Mô tả:</label><br>
-    <textarea id="description" name="description" rows="4" cols="50"></textarea><br><br>
-    <button type="submit" name="add_product">Thêm Sản Phẩm</button>
-</form>
-
-<!-- Form chỉnh sửa sản phẩm -->
-<?php
-if (isset($_GET['edit_product'])) {
-    $product_id = $_GET['edit_product'];
-    $stmt = $conn->prepare("SELECT * FROM products WHERE product_id = :id");
-    $stmt->execute([':id' => $product_id]);
-    $product = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($product) {
-        echo '<h4>Chỉnh Sửa Sản Phẩm</h4>';
-        echo '<form method="POST" action="">';
-        echo '<input type="hidden" name="product_id" value="' . $product['product_id'] . '">';
-        echo '<label for="product_name">Tên sản phẩm:</label><br>';
-        echo '<input type="text" id="product_name" name="product_name" value="' . htmlspecialchars($product['product_name']) . '" required><br><br>';
-        echo '<label for="price">Giá (VND):</label><br>';
-        echo '<input type="number" id="price" name="price" value="' . $product['price'] . '" required><br><br>';
-        echo '<label for="size">Dung tích:</label><br>';
-        echo '<input type="text" id="size" name="size" value="' . htmlspecialchars($product['size']) . '" required><br><br>';
-        echo '<label for="flavor">Hương vị:</label><br>';
-        echo '<input type="text" id="flavor" name="flavor" value="' . htmlspecialchars($product['flavor']) . '" required><br><br>';
-        echo '<label for="stock">Tồn kho:</label><br>';
-        echo '<input type="number" id="stock" name="stock" value="' . $product['stock'] . '" required><br><br>';
-        echo '<label for="category_id">Danh mục:</label><br>';
-        echo '<select id="category_id" name="category_id" required>';
-        foreach ($categories as $category) {
-            $selected = $category['category_id'] == $product['category_id'] ? 'selected' : '';
-            echo "<option value='{$category['category_id']}' $selected>{$category['category_name']}</option>";
-        }
-        echo '</select><br><br>';
-        echo '<label for="image">Hình ảnh (tên file):</label><br>';
-        echo '<input type="text" id="image" name="image" value="' . htmlspecialchars($product['image']) . '" required><br><br>';
-        echo '<label for="description">Mô tả:</label><br>';
-        echo '<textarea id="description" name="description" rows="4" cols="50">' . htmlspecialchars($product['description']) . '</textarea><br><br>';
-        echo '<button type="submit" name="update_product">Cập Nhật Sản Phẩm</button>';
-        echo '</form>';
+$cart_count = 0;
+if (!empty($_SESSION['cart'])) {
+    foreach ($_SESSION['cart'] as $item) {
+        $cart_count += $item['quantity'];
     }
 }
 ?>
 
-<!-- Danh sách sản phẩm -->
-<h4>Danh Sách Sản Phẩm</h4>
-<table border="1" style="width: 100%; text-align: center;">
-    <tr>
-        <th>ID</th><th>Tên</th><th>Giá</th><th>Dung tích</th><th>Hương vị</th><th>Tồn kho</th><th>Danh mục</th><th>Hình ảnh</th><th>Mô tả</th><th>Hành động</th>
-    </tr>
-    <?php
-    $stmt = $conn->prepare("SELECT p.product_id, p.product_name, p.price, p.size, p.flavor, p.stock, p.image, p.description, c.category_name 
-                            FROM products p 
-                            JOIN categories c ON p.category_id = c.category_id");
-    $stmt->execute();
-    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    foreach ($products as $product) {
-        echo "<tr>";
-        echo "<td>{$product['product_id']}</td>";
-        echo "<td>" . htmlspecialchars($product['product_name']) . "</td>";
-        echo "<td>" . number_format($product['price'], 0, ',', '.') . "</td>";
-        echo "<td>" . htmlspecialchars($product['size']) . "</td>";
-        echo "<td>" . htmlspecialchars($product['flavor']) . "</td>";
-        echo "<td>{$product['stock']}</td>";
-        echo "<td>" . htmlspecialchars($product['category_name']) . "</td>";
-        echo "<td>" . htmlspecialchars($product['image']) . "</td>";
-        echo "<td>" . htmlspecialchars($product['description']) . "</td>";
-        echo "<td>";
-        echo "<a href='?section=products&edit_product={$product['product_id']}'>Sửa</a> | ";
-        echo "<a href='?section=products&delete_product={$product['product_id']}' onclick='return confirm(\"Bạn có chắc muốn xóa?\");'>Xóa</a>";
-        echo "</td>";
-        echo "</tr>";
-    }
-    ?>
-</table>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Sản Phẩm - Cửa Hàng Đồ Uống</title>
+    <!-- <link rel="stylesheet" href="../assets/css/style.css"> -->
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <nav>
+                <a href="../index.php"><i class="fas fa-home"></i> Trang chủ</a>
+                <a href="dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="orders.php"><i class="fas fa-shopping-bag"></i> Đơn Hàng</a>
+                <a href="products.php" class="active"><i class="fas fa-box"></i> Sản Phẩm</a>
+                <a href="users.php"><i class="fas fa-users"></i> Người Dùng</a>
+                <a href="../login.php?logout=1"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
+            </nav>
+        </aside>
+        <main class="admin-content">
+            <header>
+                <h1>Quản Lý Sản Phẩm</h1>
+                <div class="hamburger" id="hamburger">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </header>
+            <?php if (isset($success)): ?>
+                <p class="success-message" style="display: none;" data-message="<?php echo htmlspecialchars($success); ?>"></p>
+            <?php endif; ?>
+            <?php if (isset($error)): ?>
+                <p class="error-message" style="display: none;" data-message="<?php echo htmlspecialchars($error); ?>"></p>
+            <?php endif; ?>
+
+            <!-- Form thêm sản phẩm -->
+            <section class="add-product">
+                <h3>Thêm Sản Phẩm Mới</h3>
+                <form method="POST" action="" enctype="multipart/form-data" class="product-form">
+                    <input type="text" name="name" placeholder="Tên sản phẩm" required>
+                    <input type="number" name="price" placeholder="Giá (VND)" min="0" required>
+                    <input type="number" name="stock" placeholder="Tồn kho" min="0" required>
+                    <input type="number" name="category_id" placeholder="ID Danh mục" value="1" min="1" required>
+                    <input type="file" name="image" accept="image/*">
+                    <button type="submit" name="add_product" class="btn-action">Thêm sản phẩm</button>
+                </form>
+            </section>
+
+            <!-- Danh sách sản phẩm -->
+            <section class="product-list">
+                <h3>Danh Sách Sản Phẩm</h3>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên</th>
+                            <th>Giá</th>
+                            <th>Tồn Kho</th>
+                            <th>Danh Mục</th>
+                            <th>Hình Ảnh</th>
+                            <th>Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($products as $product): ?>
+                            <tr>
+                                <td>#<?php echo $product['product_id']; ?></td>
+                                <td><?php echo htmlspecialchars($product['product_name']); ?></td>
+                                <td><?php echo number_format($product['price'], 0, ',', '.') . ' VND'; ?></td>
+                                <td><?php echo $product['stock']; ?></td>
+                                <td><?php echo $product['category_id']; ?></td>
+                                <td>
+                                    <?php if ($product['image']): ?>
+                                        <img src="../assets/images/<?php echo htmlspecialchars($product['image']); ?>" alt="Product Image" style="width: 50px; height: auto;">
+                                    <?php else: ?>
+                                        Không có
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <button class="edit-product" data-product-id="<?php echo $product['product_id']; ?>">Sửa</button>
+                                    <a href="?delete_product=<?php echo $product['product_id']; ?>" class="btn-action delete-product" onclick="return confirm('Xóa sản phẩm này?');">Xóa</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Sửa Sản Phẩm -->
+    <div class="modal" id="edit-modal">
+        <div class="modal-content">
+            <span class="close-modal">×</span>
+            <h3>Sửa Sản Phẩm</h3>
+            <form method="POST" action="" enctype="multipart/form-data" id="edit-product-form">
+                <input type="hidden" name="product_id" id="edit-product-id">
+                <input type="text" name="name" id="edit-name" placeholder="Tên sản phẩm" required>
+                <input type="number" name="price" id="edit-price" placeholder="Giá (VND)" min="0" required>
+                <input type="number" name="stock" id="edit-stock" placeholder="Tồn kho" min="0" required>
+                <input type="number" name="category_id" id="edit-category" placeholder="ID Danh mục" min="1" required>
+                <input type="file" name="image" accept="image/*">
+                <button type="submit" name="edit_product" class="btn-action">Lưu thay đổi</button>
+            </form>
+        </div>
+    </div>
+
+    <a href="../cart.php" class="cart-icon">
+        <i class="fas fa-shopping-cart"></i>
+        <?php if ($cart_count > 0): ?>
+            <span class="badge"><?php echo $cart_count; ?></span>
+        <?php endif; ?>
+    </a>
+
+    <div class="toast" id="toast"></div>
+<!-- Đảm bảo nạp đúng CSS -->
+<link rel="stylesheet" href="../assets/css/global.css">
+<link rel="stylesheet" href="../assets/css/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="../assets/js/common.js"></script> <!-- Cho modal và toast -->
+    <script src="../assets/js/admin/products.js"></script> 
+</body>
+</html>

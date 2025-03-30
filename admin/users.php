@@ -1,136 +1,267 @@
 <?php
-if ($_SESSION['role'] !== 'admin') {
-    exit("Bạn không có quyền truy cập!");
+session_start();
+include '../includes/db_connect.php';
+
+// Kiểm tra phân quyền (admin có role_id = 1)
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../login.php");
+    exit();
+}
+$stmt = $conn->prepare("SELECT role_id FROM users WHERE user_id = :user_id");
+$stmt->execute([':user_id' => $_SESSION['user_id']]);
+$role_id = $stmt->fetchColumn();
+if ($role_id != 1) { // Chỉ admin (role_id = 1) được truy cập
+    header("Location: ../login.php");
+    exit();
 }
 
 // Xử lý thêm người dùng
 if (isset($_POST['add_user'])) {
-    $username = $_POST['username'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $email = $_POST['email'];
-    $role_id = $_POST['role_id'];
+    $username = $_POST['username'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $password = password_hash($_POST['password'] ?? '', PASSWORD_DEFAULT);
+    $role_id = $_POST['role_id'] ?? 2; // Mặc định là customer (role_id = 2)
 
-    $stmt = $conn->prepare("INSERT INTO users (username, password, email, role_id) 
-                            VALUES (:username, :password, :email, :role_id)");
-    $stmt->execute([
-        ':username' => $username,
-        ':password' => $password,
-        ':email' => $email,
-        ':role_id' => $role_id
-    ]);
-    $success = "Thêm người dùng thành công!";
-}
-
-// Xử lý cập nhật người dùng
-if (isset($_POST['update_user'])) {
-    $user_id = $_POST['user_id'];
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $role_id = $_POST['role_id'];
-
-    $stmt = $conn->prepare("UPDATE users SET username = :username, email = :email, role_id = :role_id WHERE user_id = :id");
-    $stmt->execute([
-        ':id' => $user_id,
-        ':username' => $username,
-        ':email' => $email,
-        ':role_id' => $role_id
-    ]);
-    $success = "Cập nhật người dùng thành công!";
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE username = :username OR email = :email");
+    $stmt->execute([':username' => $username, ':email' => $email]);
+    if ($stmt->fetchColumn() > 0) {
+        $error = "Tên người dùng hoặc email đã tồn tại!";
+    } else {
+        $stmt = $conn->prepare("INSERT INTO users (username, email, password, role_id) VALUES (:username, :email, :password, :role_id)");
+        $result = $stmt->execute([':username' => $username, ':email' => $email, ':password' => $password, ':role_id' => $role_id]);
+        if ($result) {
+            $success = "Đã thêm người dùng '$username' thành công!";
+        } else {
+            $error = "Lỗi khi thêm người dùng!";
+        }
+    }
 }
 
 // Xử lý xóa người dùng
 if (isset($_GET['delete_user'])) {
     $user_id = $_GET['delete_user'];
-    
-    // Kiểm tra xem người dùng có đơn hàng không (tùy chọn, để tránh xóa dữ liệu liên quan)
-    $stmt = $conn->prepare("SELECT COUNT(*) FROM orders WHERE user_id = :id");
-    $stmt->execute([':id' => $user_id]);
-    $order_count = $stmt->fetchColumn();
-
-    if ($order_count > 0) {
-        $error = "Không thể xóa người dùng này vì họ đã có đơn hàng!";
+    $stmt = $conn->prepare("DELETE FROM users WHERE user_id = :user_id AND role_id != 1"); // Không xóa admin
+    $result = $stmt->execute([':user_id' => $user_id]);
+    if ($result && $stmt->rowCount() > 0) {
+        $success = "Đã xóa người dùng #$user_id thành công!";
     } else {
-        $stmt = $conn->prepare("DELETE FROM users WHERE user_id = :id");
-        $stmt->execute([':id' => $user_id]);
-        $success = "Xóa người dùng thành công!";
+        $error = "Không thể xóa người dùng #$user_id! Có thể là admin hoặc lỗi database.";
+    }
+}
+
+// Xử lý cập nhật vai trò
+if (isset($_POST['update_role'])) {
+    $user_id = $_POST['user_id'] ?? null;
+    $new_role_id = $_POST['role_id'] ?? null;
+
+    if (!$user_id || !$new_role_id) {
+        $error = "Dữ liệu gửi từ form không hợp lệ!";
+    } else {
+        $stmt = $conn->prepare("UPDATE users SET role_id = :role_id WHERE user_id = :user_id AND role_id != 1"); // Không cập nhật admin
+        $result = $stmt->execute([':role_id' => $new_role_id, ':user_id' => $user_id]);
+        if ($result && $stmt->rowCount() > 0) {
+            $success = "Đã cập nhật vai trò cho người dùng #$user_id!";
+        } else {
+            $error = "Không thể cập nhật vai trò cho người dùng #$user_id! Có thể là admin hoặc lỗi database.";
+        }
+    }
+}
+
+// Xử lý tìm kiếm và phân trang
+$search = $_GET['search'] ?? '';
+$page = $_GET['page'] ?? 1;
+$limit = 10;
+$offset = ($page - 1) * $limit;
+
+$where = '';
+$params = [];
+if (!empty($search)) {
+    $where = "WHERE u.username LIKE :search OR u.email LIKE :search";
+    $params[':search'] = "%$search%";
+}
+
+$stmt = $conn->prepare("SELECT COUNT(*) FROM users u $where");
+$stmt->execute($params);
+$total_users = $stmt->fetchColumn();
+$total_pages = ceil($total_users / $limit);
+
+// Lấy danh sách người dùng với JOIN bảng roles
+$query = "SELECT u.user_id, u.username, u.email, u.role_id, r.role_name, u.created_at 
+          FROM users u 
+          LEFT JOIN roles r ON u.role_id = r.role_id 
+          $where 
+          ORDER BY u.created_at DESC 
+          LIMIT :limit OFFSET :offset";
+$stmt = $conn->prepare($query);
+if (!empty($search)) {
+    $stmt->bindValue(':search', "%$search%", PDO::PARAM_STR);
+}
+$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->execute();
+$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Lấy danh sách vai trò cho form (loại trừ admin)
+$stmt = $conn->prepare("SELECT role_id, role_name FROM roles WHERE role_id != 1");
+$stmt->execute();
+$roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$cart_count = 0;
+if (!empty($_SESSION['cart'])) {
+    foreach ($_SESSION['cart'] as $item) {
+        $cart_count += $item['quantity'];
     }
 }
 ?>
 
-<h3>Quản Lý Người Dùng</h3>
-<?php 
-if (isset($success)) echo "<p style='color: green;'>$success</p>"; 
-if (isset($error)) echo "<p style='color: red;'>$error</p>"; 
-?>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Người Dùng - Cửa Hàng Đồ Uống</title>
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <nav>
+                <a href="../index.php"><i class="fas fa-home"></i> Trang chủ</a>
+                <a href="dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="orders.php"><i class="fas fa-shopping-bag"></i> Đơn Hàng</a>
+                <a href="products.php"><i class="fas fa-box"></i> Sản Phẩm</a>
+                <a href="users.php" class="active"><i class="fas fa-users"></i> Người Dùng</a>
+                <a href="../login.php?logout=1"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
+            </nav>
+        </aside>
+        <main class="admin-content">
+            <header>
+                <h1>Quản Lý Người Dùng</h1>
+                <div class="hamburger" id="hamburger">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </header>
+            <?php if (isset($success)): ?>
+                <p class="success-message" style="display: none;" data-message="<?php echo htmlspecialchars($success); ?>"></p>
+            <?php endif; ?>
+            <?php if (isset($error)): ?>
+                <p class="error-message" style="display: none;" data-message="<?php echo htmlspecialchars($error); ?>"></p>
+            <?php endif; ?>
 
-<!-- Form thêm người dùng -->
-<h4>Thêm Người Dùng Mới</h4>
-<form method="POST" action="">
-    <label for="username">Tên đăng nhập:</label><br>
-    <input type="text" id="username" name="username" required><br><br>
-    <label for="password">Mật khẩu:</label><br>
-    <input type="password" id="password" name="password" required><br><br>
-    <label for="email">Email:</label><br>
-    <input type="email" id="email" name="email" required><br><br>
-    <label for="role_id">Vai trò:</label><br>
-    <select id="role_id" name="role_id" required>
-        <option value="2">Customer</option>
-        <option value="3">Staff</option>
-    </select><br><br>
-    <button type="submit" name="add_user">Thêm Người Dùng</button>
-</form>
+            <!-- Form thêm người dùng -->
+            <div class="add-user">
+                <h3>Thêm Người Dùng Mới</h3>
+                <form method="POST" action="" class="user-form">
+                    <input type="text" name="username" placeholder="Tên người dùng" required>
+                    <input type="email" name="email" placeholder="Email" required>
+                    <input type="password" name="password" placeholder="Mật khẩu" required>
+                    <select name="role_id">
+                        <?php foreach ($roles as $role): ?>
+                            <option value="<?php echo $role['role_id']; ?>" <?php echo $role['role_id'] == 2 ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($role['role_name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <button type="submit" name="add_user" class="btn-action">Thêm</button>
+                </form>
+            </div>
 
-<!-- Form chỉnh sửa người dùng -->
-<?php
-if (isset($_GET['edit_user'])) {
-    $user_id = $_GET['edit_user'];
-    $stmt = $conn->prepare("SELECT u.user_id, u.username, u.email, u.role_id, r.role_name 
-                            FROM users u 
-                            JOIN roles r ON u.role_id = r.role_id 
-                            WHERE u.user_id = :id");
-    $stmt->execute([':id' => $user_id]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            <!-- Tìm kiếm -->
+            <div class="search-bar">
+                <form method="GET" action="">
+                    <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Tìm kiếm theo tên hoặc email...">
+                    <button type="submit" class="btn-primary"><i class="fas fa-search"></i> Tìm</button>
+                </form>
+            </div>
 
-    if ($user) {
-        echo '<h4>Chỉnh Sửa Người Dùng</h4>';
-        echo '<form method="POST" action="">';
-        echo '<input type="hidden" name="user_id" value="' . $user['user_id'] . '">';
-        echo '<label for="username">Tên đăng nhập:</label><br>';
-        echo '<input type="text" id="username" name="username" value="' . htmlspecialchars($user['username']) . '" required><br><br>';
-        echo '<label for="email">Email:</label><br>';
-        echo '<input type="email" id="email" name="email" value="' . htmlspecialchars($user['email']) . '" required><br><br>';
-        echo '<label for="role_id">Vai trò:</label><br>';
-        echo '<select id="role_id" name="role_id" required>';
-        echo '<option value="2" ' . ($user['role_id'] == 2 ? 'selected' : '') . '>Customer</option>';
-        echo '<option value="3" ' . ($user['role_id'] == 3 ? 'selected' : '') . '>Staff</option>';
-        echo '</select><br><br>';
-        echo '<button type="submit" name="update_user">Cập Nhật Người Dùng</button>';
-        echo '</form>';
-    }
-}
-?>
+            <!-- Danh sách người dùng -->
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên Người Dùng</th>
+                        <th>Email</th>
+                        <th>Vai Trò</th>
+                        <th>Ngày Tạo</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($users)): ?>
+                        <tr><td colspan="6">Không tìm thấy người dùng nào!</td></tr>
+                    <?php else: ?>
+                        <?php foreach ($users as $user): ?>
+                            <tr>
+                                <td>#<?php echo $user['user_id']; ?></td>
+                                <td><?php echo htmlspecialchars($user['username']); ?></td>
+                                <td><?php echo htmlspecialchars($user['email']); ?></td>
+                                <td class="role-<?php echo strtolower($user['role_name']); ?>">
+                                    <?php echo htmlspecialchars($user['role_name']); ?>
+                                </td>
+                                <td><?php echo date('d/m/Y H:i', strtotime($user['created_at'])); ?></td>
+                                <td>
+                                    <button class="view-details" data-user-id="<?php echo $user['user_id']; ?>">Xem chi tiết</button>
+                                    <?php if ($user['role_id'] != 1): // Không chỉnh sửa admin ?>
+                                        <form method="POST" action="" class="role-form" style="display: inline;">
+                                            <input type="hidden" name="user_id" value="<?php echo $user['user_id']; ?>">
+                                            <select name="role_id" onchange="this.form.submit()">
+                                                <?php foreach ($roles as $role): ?>
+                                                    <option value="<?php echo $role['role_id']; ?>" <?php echo $user['role_id'] == $role['role_id'] ? 'selected' : ''; ?>>
+                                                        <?php echo htmlspecialchars($role['role_name']); ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                            <input type="hidden" name="update_role" value="1">
+                                        </form>
+                                        <a href="?delete_user=<?php echo $user['user_id']; ?>" class="btn-action delete-user" onclick="return confirm('Xóa người dùng này?');">Xóa</a>
+                                    <?php else: ?>
+                                        <span>Không thể chỉnh sửa</span>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
 
-<!-- Danh sách người dùng -->
-<h4>Danh Sách Người Dùng</h4>
-<table border="1" style="width: 100%; text-align: center;">
-    <tr><th>ID</th><th>Tên đăng nhập</th><th>Email</th><th>Vai trò</th><th>Hành động</th></tr>
-    <?php
-    $stmt = $conn->prepare("SELECT u.user_id, u.username, u.email, r.role_name 
-                            FROM users u 
-                            JOIN roles r ON u.role_id = r.role_id");
-    $stmt->execute();
-    $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    foreach ($users as $user) {
-        echo "<tr>";
-        echo "<td>{$user['user_id']}</td>";
-        echo "<td>" . htmlspecialchars($user['username']) . "</td>";
-        echo "<td>" . htmlspecialchars($user['email']) . "</td>";
-        echo "<td>" . htmlspecialchars($user['role_name']) . "</td>";
-        echo "<td>";
-        echo "<a href='?section=users&edit_user={$user['user_id']}'>Sửa</a> | ";
-        echo "<a href='?section=users&delete_user={$user['user_id']}' onclick='return confirm(\"Bạn có chắc muốn xóa người dùng này?\");'>Xóa</a>";
-        echo "</td>";
-        echo "</tr>";
-    }
-    ?>
-</table>
+            <!-- Phân trang -->
+            <?php if ($total_pages > 1): ?>
+                <div class="pagination">
+                    <?php if ($page > 1): ?>
+                        <a href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>" class="btn-secondary">« Trước</a>
+                    <?php endif; ?>
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <a href="?page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>" class="btn-secondary <?php echo $i == $page ? 'active' : ''; ?>"><?php echo $i; ?></a>
+                    <?php endfor; ?>
+                    <?php if ($page < $total_pages): ?>
+                        <a href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>" class="btn-secondary">Tiếp »</a>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+        </main>
+    </div>
+
+    <!-- Modal Chi Tiết Người Dùng -->
+    <div class="modal" id="user-modal">
+        <div class="modal-content">
+            <span class="close-modal">×</span>
+            <h3>Chi Tiết Người Dùng</h3>
+            <div id="user-details"></div>
+        </div>
+    </div>
+
+    <a href="../cart.php" class="cart-icon">
+        <i class="fas fa-shopping-cart"></i>
+        <?php if ($cart_count > 0): ?>
+            <span class="badge"><?php echo $cart_count; ?></span>
+        <?php endif; ?>
+    </a>
+
+    <div class="toast" id="toast"></div>
+    <script src="../assets/js/common.js"></script>
+    <script src="../assets/js/admin/users.js"></script>
+</body>
+</html>
