@@ -7,45 +7,77 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Cập nhật vai trò người dùng
-    const roleForms = document.querySelectorAll('.role-form');
-    roleForms.forEach(form => {
-        form.addEventListener('submit', function() {
-            window.showToast('Đang cập nhật vai trò...');
-        });
-    });
-
-    // Xử lý sự kiện "Xem chi tiết" bằng event delegation
-    document.addEventListener('click', function(event) {
-        if (event.target.classList.contains('view-details')) {
-            const userId = event.target.getAttribute('data-user-id');
+    // Xem chi tiết người dùng
+    const viewButtons = document.querySelectorAll('.view-details');
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = button.getAttribute('data-user-id');
             fetchUserDetails(userId);
             document.getElementById('user-modal').style.display = 'block';
-        }
-    });
-
-    // Đóng modal khi nhấn vào nút đóng hoặc bên ngoài modal
-    const modal = document.getElementById('user-modal');
-    const closeModal = document.querySelector('.close-modal');
-
-    if (closeModal) {
-        closeModal.addEventListener('click', function() {
-            modal.style.display = 'none';
         });
-    }
-
-    window.addEventListener('click', function(event) {
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
     });
 
-    // Hàm lấy chi tiết người dùng từ server
+    // Chỉnh sửa người dùng
+    const editButtons = document.querySelectorAll('.edit-user');
+    console.log('Số nút Sửa tìm thấy:', editButtons.length); // Kiểm tra xem có nút nào không
+    editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            console.log('Nút Sửa được click, user_id:', button.getAttribute('data-user-id')); // Xác nhận click
+            const userId = button.getAttribute('data-user-id');
+            fetch(`../get_user_details.php?id=${userId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Lỗi HTTP: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    console.log('Dữ liệu trả về:', data); // Xác nhận dữ liệu
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(data, 'text/html');
+                    const rows = doc.querySelectorAll('table tr');
+                    const userData = {};
+                    rows.forEach(row => {
+                        const key = row.querySelector('th').textContent.trim();
+                        const value = row.querySelector('td').textContent.trim();
+                        userData[key] = value;
+                    });
+                    document.getElementById('edit-user-id').value = userId;
+                    document.getElementById('edit-full-name').value = userData['Họ và Tên'] || '';
+                    document.getElementById('edit-phone').value = userData['Số Điện Thoại'] || '';
+                    document.getElementById('edit-address').value = userData['Địa Chỉ'] || '';
+                    const roleMap = { 'customer': 2, 'staff': 3 };
+                    document.getElementById('edit-role-id').value = roleMap[userData['Vai Trò'].toLowerCase()] || 2;
+                    document.getElementById('edit-user-modal').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Lỗi khi lấy thông tin người dùng:', error);
+                    window.showToast('Lỗi khi tải thông tin người dùng!');
+                });
+        });
+    });
+
+    // Đóng modal
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        const closeButton = modal.querySelector('.close-modal');
+        if (closeButton) {
+            closeButton.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+        }
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+
     function fetchUserDetails(userId) {
         fetch(`../get_user_details.php?id=${userId}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`Lỗi HTTP: ${response.status} - ${response.statusText}`);
+                    throw new Error(`Lỗi HTTP: ${response.status}`);
                 }
                 return response.text();
             })

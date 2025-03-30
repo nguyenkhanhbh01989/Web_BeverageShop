@@ -377,3 +377,79 @@
         opacity: 1;
     }
 }
+
+
+/* Điều chỉnh bảng */
+
+.admin-table th,
+.admin-table td {
+    padding: 10px;
+    /* Giảm padding để chứa nhiều cột */
+    font-size: 14px;
+    /* Giảm kích thước chữ nếu cần */
+}
+
+
+/* Form thêm người dùng */
+
+.user-form textarea {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex: 1;
+    min-width: 150px;
+    resize: vertical;
+}
+
+
+/* Nút sửa */
+
+.edit-user {
+    background-color: #F47920 !important;
+    color: #FFFFFF !important;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.edit-user:hover {
+    background-color: #E06B1A;
+}
+
+
+/* Form trong modal */
+
+#edit-user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#edit-user-form input,
+#edit-user-form select,
+#edit-user-form textarea {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#edit-user-form textarea {
+    resize: vertical;
+}
+
+#edit-user-form button {
+    background-color: #28A745;
+    /* Màu xanh lá */
+    color: #FFFFFF;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#edit-user-form button:hover {
+    background-color: #218838;
+}

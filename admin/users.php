@@ -20,15 +20,27 @@ if (isset($_POST['add_user'])) {
     $username = $_POST['username'] ?? '';
     $email = $_POST['email'] ?? '';
     $password = password_hash($_POST['password'] ?? '', PASSWORD_DEFAULT);
-    $role_id = $_POST['role_id'] ?? 2; // Mặc định là customer (role_id = 2)
+    $full_name = $_POST['full_name'] ?? '';
+    $phone = $_POST['phone'] ?? '';
+    $address = $_POST['address'] ?? '';
+    $role_id = $_POST['role_id'] ?? 2; // Mặc định là customer
 
     $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE username = :username OR email = :email");
     $stmt->execute([':username' => $username, ':email' => $email]);
     if ($stmt->fetchColumn() > 0) {
         $error = "Tên người dùng hoặc email đã tồn tại!";
     } else {
-        $stmt = $conn->prepare("INSERT INTO users (username, email, password, role_id) VALUES (:username, :email, :password, :role_id)");
-        $result = $stmt->execute([':username' => $username, ':email' => $email, ':password' => $password, ':role_id' => $role_id]);
+        $stmt = $conn->prepare("INSERT INTO users (username, email, password, full_name, phone, address, role_id) 
+                                VALUES (:username, :email, :password, :full_name, :phone, :address, :role_id)");
+        $result = $stmt->execute([
+            ':username' => $username,
+            ':email' => $email,
+            ':password' => $password,
+            ':full_name' => $full_name,
+            ':phone' => $phone,
+            ':address' => $address,
+            ':role_id' => $role_id
+        ]);
         if ($result) {
             $success = "Đã thêm người dùng '$username' thành công!";
         } else {
@@ -49,20 +61,30 @@ if (isset($_GET['delete_user'])) {
     }
 }
 
-// Xử lý cập nhật vai trò
-if (isset($_POST['update_role'])) {
+// Xử lý cập nhật thông tin người dùng
+if (isset($_POST['update_user'])) {
     $user_id = $_POST['user_id'] ?? null;
+    $full_name = $_POST['full_name'] ?? '';
+    $phone = $_POST['phone'] ?? '';
+    $address = $_POST['address'] ?? '';
     $new_role_id = $_POST['role_id'] ?? null;
 
-    if (!$user_id || !$new_role_id) {
+    if (!$user_id) {
         $error = "Dữ liệu gửi từ form không hợp lệ!";
     } else {
-        $stmt = $conn->prepare("UPDATE users SET role_id = :role_id WHERE user_id = :user_id AND role_id != 1"); // Không cập nhật admin
-        $result = $stmt->execute([':role_id' => $new_role_id, ':user_id' => $user_id]);
+        $stmt = $conn->prepare("UPDATE users SET full_name = :full_name, phone = :phone, address = :address, role_id = :role_id 
+                                WHERE user_id = :user_id AND role_id != 1"); // Không cập nhật admin
+        $result = $stmt->execute([
+            ':full_name' => $full_name,
+            ':phone' => $phone,
+            ':address' => $address,
+            ':role_id' => $new_role_id,
+            ':user_id' => $user_id
+        ]);
         if ($result && $stmt->rowCount() > 0) {
-            $success = "Đã cập nhật vai trò cho người dùng #$user_id!";
+            $success = "Đã cập nhật thông tin người dùng #$user_id!";
         } else {
-            $error = "Không thể cập nhật vai trò cho người dùng #$user_id! Có thể là admin hoặc lỗi database.";
+            $error = "Không thể cập nhật người dùng #$user_id! Có thể là admin hoặc lỗi database.";
         }
     }
 }
@@ -76,7 +98,7 @@ $offset = ($page - 1) * $limit;
 $where = '';
 $params = [];
 if (!empty($search)) {
-    $where = "WHERE u.username LIKE :search OR u.email LIKE :search";
+    $where = "WHERE u.username LIKE :search OR u.email LIKE :search OR u.full_name LIKE :search OR u.phone LIKE :search";
     $params[':search'] = "%$search%";
 }
 
@@ -86,7 +108,7 @@ $total_users = $stmt->fetchColumn();
 $total_pages = ceil($total_users / $limit);
 
 // Lấy danh sách người dùng với JOIN bảng roles
-$query = "SELECT u.user_id, u.username, u.email, u.role_id, r.role_name, u.created_at 
+$query = "SELECT u.user_id, u.username, u.email, u.full_name, u.phone, u.address, u.role_id, r.role_name, u.created_at 
           FROM users u 
           LEFT JOIN roles r ON u.role_id = r.role_id 
           $where 
@@ -101,7 +123,7 @@ $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Lấy danh sách vai trò cho form (loại trừ admin)
+// Lấy danh sách vai trò (loại trừ admin)
 $stmt = $conn->prepare("SELECT role_id, role_name FROM roles WHERE role_id != 1");
 $stmt->execute();
 $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -128,6 +150,7 @@ if (!empty($_SESSION['cart'])) {
 <body>
     <div class="admin-container">
         <aside class="sidebar">
+            <h3>Quản Lý</h3>
             <nav>
                 <a href="../index.php"><i class="fas fa-home"></i> Trang chủ</a>
                 <a href="dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
@@ -157,6 +180,9 @@ if (!empty($_SESSION['cart'])) {
                 <form method="POST" action="" class="user-form">
                     <input type="text" name="username" placeholder="Tên người dùng" required>
                     <input type="email" name="email" placeholder="Email" required>
+                    <input type="text" name="full_name" placeholder="Họ và tên" required>
+                    <input type="text" name="phone" placeholder="Số điện thoại" required>
+                    <textarea name="address" placeholder="Địa chỉ" rows="3" required></textarea>
                     <input type="password" name="password" placeholder="Mật khẩu" required>
                     <select name="role_id">
                         <?php foreach ($roles as $role): ?>
@@ -172,7 +198,7 @@ if (!empty($_SESSION['cart'])) {
             <!-- Tìm kiếm -->
             <div class="search-bar">
                 <form method="GET" action="">
-                    <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Tìm kiếm theo tên hoặc email...">
+                    <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Tìm kiếm theo tên, email, số điện thoại...">
                     <button type="submit" class="btn-primary"><i class="fas fa-search"></i> Tìm</button>
                 </form>
             </div>
@@ -183,7 +209,10 @@ if (!empty($_SESSION['cart'])) {
                     <tr>
                         <th>ID</th>
                         <th>Tên Người Dùng</th>
+                        <th>Họ và Tên</th>
                         <th>Email</th>
+                        <th>Số Điện Thoại</th>
+                        <th>Địa Chỉ</th>
                         <th>Vai Trò</th>
                         <th>Ngày Tạo</th>
                         <th>Hành Động</th>
@@ -191,13 +220,16 @@ if (!empty($_SESSION['cart'])) {
                 </thead>
                 <tbody>
                     <?php if (empty($users)): ?>
-                        <tr><td colspan="6">Không tìm thấy người dùng nào!</td></tr>
+                        <tr><td colspan="9">Không tìm thấy người dùng nào!</td></tr>
                     <?php else: ?>
                         <?php foreach ($users as $user): ?>
                             <tr>
                                 <td>#<?php echo $user['user_id']; ?></td>
                                 <td><?php echo htmlspecialchars($user['username']); ?></td>
+                                <td><?php echo htmlspecialchars($user['full_name']); ?></td>
                                 <td><?php echo htmlspecialchars($user['email']); ?></td>
+                                <td><?php echo htmlspecialchars($user['phone']); ?></td>
+                                <td><?php echo htmlspecialchars($user['address']); ?></td>
                                 <td class="role-<?php echo strtolower($user['role_name']); ?>">
                                     <?php echo htmlspecialchars($user['role_name']); ?>
                                 </td>
@@ -205,17 +237,7 @@ if (!empty($_SESSION['cart'])) {
                                 <td>
                                     <button class="view-details" data-user-id="<?php echo $user['user_id']; ?>">Xem chi tiết</button>
                                     <?php if ($user['role_id'] != 1): // Không chỉnh sửa admin ?>
-                                        <form method="POST" action="" class="role-form" style="display: inline;">
-                                            <input type="hidden" name="user_id" value="<?php echo $user['user_id']; ?>">
-                                            <select name="role_id" onchange="this.form.submit()">
-                                                <?php foreach ($roles as $role): ?>
-                                                    <option value="<?php echo $role['role_id']; ?>" <?php echo $user['role_id'] == $role['role_id'] ? 'selected' : ''; ?>>
-                                                        <?php echo htmlspecialchars($role['role_name']); ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                            <input type="hidden" name="update_role" value="1">
-                                        </form>
+                                        <button class="edit-user" data-user-id="<?php echo $user['user_id']; ?>">Sửa</button>
                                         <a href="?delete_user=<?php echo $user['user_id']; ?>" class="btn-action delete-user" onclick="return confirm('Xóa người dùng này?');">Xóa</a>
                                     <?php else: ?>
                                         <span>Không thể chỉnh sửa</span>
@@ -250,6 +272,26 @@ if (!empty($_SESSION['cart'])) {
             <span class="close-modal">×</span>
             <h3>Chi Tiết Người Dùng</h3>
             <div id="user-details"></div>
+        </div>
+    </div>
+
+    <!-- Modal Chỉnh Sửa Người Dùng -->
+    <div class="modal" id="edit-user-modal">
+        <div class="modal-content">
+            <span class="close-modal">×</span>
+            <h3>Chỉnh Sửa Người Dùng</h3>
+            <form method="POST" action="" class="user-form" id="edit-user-form">
+                <input type="hidden" name="user_id" id="edit-user-id">
+                <input type="text" name="full_name" id="edit-full-name" placeholder="Họ và tên" required>
+                <input type="text" name="phone" id="edit-phone" placeholder="Số điện thoại" required>
+                <textarea name="address" id="edit-address" placeholder="Địa chỉ" rows="3" required></textarea>
+                <select name="role_id" id="edit-role-id">
+                    <?php foreach ($roles as $role): ?>
+                        <option value="<?php echo $role['role_id']; ?>"><?php echo htmlspecialchars($role['role_name']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <button type="submit" name="update_user" class="btn-action">Lưu</button>
+            </form>
         </div>
     </div>
 
