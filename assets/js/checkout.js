@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const placeOrderForm = document.querySelector('.place-order-form');
     if (placeOrderForm) {
         placeOrderForm.addEventListener('submit', function() {
-            window.showToast('Đang xử lý đơn hàng...');
+            window.showToast('Processing order...');
             window.animateCart();
         });
 

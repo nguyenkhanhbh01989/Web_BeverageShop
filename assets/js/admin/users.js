@@ -19,20 +19,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Chỉnh sửa người dùng
     const editButtons = document.querySelectorAll('.edit-user');
-    console.log('Số nút Sửa tìm thấy:', editButtons.length); // Kiểm tra xem có nút nào không
+    console.log('Number of Edit buttons found:', editButtons.length); // Kiểm tra xem có nút nào không
     editButtons.forEach(button => {
         button.addEventListener('click', function() {
-            console.log('Nút Sửa được click, user_id:', button.getAttribute('data-user-id')); // Xác nhận click
+            console.log('Edit button clicked, user_id:', button.getAttribute('data-user-id')); // Xác nhận click
             const userId = button.getAttribute('data-user-id');
             fetch(`../get_user_details.php?id=${userId}`)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error(`Lỗi HTTP: ${response.status}`);
+                        throw new Error(`HTTP Error: ${response.status}`);
                     }
                     return response.text();
                 })
                 .then(data => {
-                    console.log('Dữ liệu trả về:', data); // Xác nhận dữ liệu
+                    console.log('Data returned:', data); // Xác nhận dữ liệu
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(data, 'text/html');
                     const rows = doc.querySelectorAll('table tr');
@@ -43,16 +43,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         userData[key] = value;
                     });
                     document.getElementById('edit-user-id').value = userId;
-                    document.getElementById('edit-full-name').value = userData['Họ và Tên'] || '';
-                    document.getElementById('edit-phone').value = userData['Số Điện Thoại'] || '';
-                    document.getElementById('edit-address').value = userData['Địa Chỉ'] || '';
-                    const roleMap = { 'customer': 2, 'staff': 3 };
-                    document.getElementById('edit-role-id').value = roleMap[userData['Vai Trò'].toLowerCase()] || 2;
+                    document.getElementById('edit-full-name').value = userData['Full Name'] || ''; // Sửa từ 'Full NameName' thành 'Full Name'
+                    document.getElementById('edit-phone').value = userData['Phone Number'] || ''; // Sửa từ 'Phone' thành 'Phone Number'
+                    document.getElementById('edit-address').value = userData['Address'] || ''; // Sửa từ 'Địa Chỉ' thành 'Address'
+                    const roleMap = { 'customer': 2, 'staff': 3, 'admin': 1 }; // Thêm 'admin': 1
+                    const roleName = userData['Role'] ? userData['Role'].toLowerCase() : 'customer'; // Sửa từ 'Vai Trò' thành 'Role', thêm kiểm tra undefined
+                    document.getElementById('edit-role-id').value = roleMap[roleName] || 2;
                     document.getElementById('edit-user-modal').style.display = 'block';
                 })
                 .catch(error => {
-                    console.error('Lỗi khi lấy thông tin người dùng:', error);
-                    window.showToast('Lỗi khi tải thông tin người dùng!');
+                    console.error('Error fetching user info:', error);
+                    window.showToast('Error loading user information!');
                 });
         });
     });
@@ -77,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(`../get_user_details.php?id=${userId}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`Lỗi HTTP: ${response.status}`);
+                    throw new Error(`HTTP Error: ${response.status}`);
                 }
                 return response.text();
             })
@@ -85,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('user-details').innerHTML = data;
             })
             .catch(error => {
-                document.getElementById('user-details').innerHTML = `Lỗi khi tải chi tiết người dùng: ${error.message}`;
+                document.getElementById('user-details').innerHTML = `Error loading user details: ${error.message}`;
                 console.error('Error:', error);
             });
     }

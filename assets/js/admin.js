@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const statusForms = document.querySelectorAll('.status-form');
     statusForms.forEach(form => {
         form.addEventListener('submit', function() {
-            window.showToast('Đang cập nhật trạng thái...');
+            window.showToast('Updating status...');
         });
     });
 
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('order-details').innerHTML = data;
             })
             .catch(error => {
-                document.getElementById('order-details').innerHTML = 'Lỗi khi tải chi tiết đơn hàng!';
+                document.getElementById('order-details').innerHTML = 'Error loading order details!';
                 console.error('Error:', error);
             });
     }

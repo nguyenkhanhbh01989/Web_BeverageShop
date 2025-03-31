@@ -2,13 +2,13 @@
 session_start();
 include '../includes/db_connect.php';
 
-// Kiểm tra phân quyền
+// Check user role (Kiểm tra quyền của người dùng)
 if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'staff'])) {
     header("Location: ../login.php");
     exit();
 }
 
-// Lấy thông tin tổng quan
+// Fetch overview information (Lấy thông tin tổng quan)
 $stmt = $conn->prepare("SELECT COUNT(*) as total_orders FROM orders");
 $stmt->execute();
 $total_orders = $stmt->fetch(PDO::FETCH_ASSOC)['total_orders'];
@@ -25,6 +25,7 @@ $stmt = $conn->prepare("SELECT COUNT(*) as total_users FROM users");
 $stmt->execute();
 $total_users = $stmt->fetch(PDO::FETCH_ASSOC)['total_users'];
 
+// Calculate total cart items (Tính tổng số lượng sản phẩm trong giỏ)
 $cart_count = 0;
 if (!empty($_SESSION['cart'])) {
     foreach ($_SESSION['cart'] as $item) {
@@ -34,11 +35,11 @@ if (!empty($_SESSION['cart'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Quản Lý Cửa Hàng</title>
+    <title>Dashboard - Store Management</title>
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/global.css">
     <link rel="stylesheet" href="../assets/css/admin.css">
@@ -48,15 +49,16 @@ if (!empty($_SESSION['cart'])) {
 <body>
     <div class="admin-container">
         <aside class="sidebar">
+            <h3>Management</h3>
             <nav>
-                <a href="../index.php"><i class="fas fa-home"></i> Trang chủ</a>
-                <a href="dashboard.php" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>              
-                <a href="orders.php"><i class="fas fa-shopping-bag"></i> Đơn Hàng<?php if ($pending_orders > 0) echo " ($pending_orders)"; ?></a>
-                <a href="products.php"><i class="fas fa-box"></i> Sản Phẩm</a>
+                <a href="../index.php"><i class="fas fa-home"></i> Home</a>
+                <a href="dashboard.php" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="orders.php"><i class="fas fa-shopping-bag"></i> Orders<?php if ($pending_orders > 0) echo " ($pending_orders)"; ?></a>
+                <a href="products.php"><i class="fas fa-box"></i> Products</a>
                 <?php if ($_SESSION['role'] === 'admin'): ?>
-                    <a href="users.php"><i class="fas fa-users"></i> Người Dùng</a>
+                    <a href="users.php"><i class="fas fa-users"></i> Users</a>
                 <?php endif; ?>
-                <a href="../login.php?logout=1"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
+                <a href="../login.php?logout=1"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </nav>
         </aside>
         <main class="admin-content">
@@ -67,30 +69,30 @@ if (!empty($_SESSION['cart'])) {
                 </div>
             </header>
             <section class="welcome">
-                <h2>Chào mừng <?php echo htmlspecialchars($_SESSION['username']); ?>!</h2>
-                <p>Vai trò: <?php echo htmlspecialchars($_SESSION['role']); ?></p>
+                <h2>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h2>
+                <p>Role: <?php echo htmlspecialchars($_SESSION['role']); ?></p>
             </section>
             <?php if ($pending_orders > 0): ?>
                 <div class="notification">
-                    Có <?php echo $pending_orders; ?> đơn hàng mới đang chờ xử lý! 
-                    <a href="orders.php">Xem ngay</a>
+                    There are <?php echo $pending_orders; ?> new pending orders! 
+                    <a href="orders.php">View now</a>
                 </div>
             <?php endif; ?>
             <section class="dashboard-stats">
                 <div class="stat-card">
-                    <h3>Tổng Đơn Hàng</h3>
+                    <h3>Total Orders</h3>
                     <p><?php echo $total_orders; ?></p>
                 </div>
                 <div class="stat-card">
-                    <h3>Đơn Hàng Chờ Xử Lý</h3>
+                    <h3>Pending Orders</h3>
                     <p><?php echo $pending_orders; ?></p>
                 </div>
                 <div class="stat-card">
-                    <h3>Tổng Sản Phẩm</h3>
+                    <h3>Total Products</h3>
                     <p><?php echo $total_products; ?></p>
                 </div>
                 <div class="stat-card">
-                    <h3>Tổng Người Dùng</h3>
+                    <h3>Total Users</h3>
                     <p><?php echo $total_users; ?></p>
                 </div>
             </section>
@@ -108,7 +110,7 @@ if (!empty($_SESSION['cart'])) {
     <script src="../assets/js/common.js"></script>
     <script src="../assets/js/admin.js"></script>
     <script>
-        // Toggle sidebar trên mobile
+        // Toggle sidebar on mobile (Ẩn/hiện sidebar trên mobile)
         document.getElementById('hamburger').addEventListener('click', function() {
             document.querySelector('.sidebar').classList.toggle('active');
         });

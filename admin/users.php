@@ -28,7 +28,7 @@ if (isset($_POST['add_user'])) {
     $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE username = :username OR email = :email");
     $stmt->execute([':username' => $username, ':email' => $email]);
     if ($stmt->fetchColumn() > 0) {
-        $error = "Tên người dùng hoặc email đã tồn tại!";
+        $error = "Username or email already exists!";
     } else {
         $stmt = $conn->prepare("INSERT INTO users (username, email, password, full_name, phone, address, role_id) 
                                 VALUES (:username, :email, :password, :full_name, :phone, :address, :role_id)");
@@ -42,10 +42,10 @@ if (isset($_POST['add_user'])) {
             ':role_id' => $role_id
         ]);
         if ($result) {
-            $success = "Đã thêm người dùng '$username' thành công!";
-        } else {
-            $error = "Lỗi khi thêm người dùng!";
-        }
+            $success = "User '$username' added successfully!";
+            } else {
+            $error = "Error adding user!";
+            }
     }
 }
 
@@ -55,9 +55,9 @@ if (isset($_GET['delete_user'])) {
     $stmt = $conn->prepare("DELETE FROM users WHERE user_id = :user_id AND role_id != 1"); // Không xóa admin
     $result = $stmt->execute([':user_id' => $user_id]);
     if ($result && $stmt->rowCount() > 0) {
-        $success = "Đã xóa người dùng #$user_id thành công!";
+        $success = "User #$user_id deleted successfully!";
     } else {
-        $error = "Không thể xóa người dùng #$user_id! Có thể là admin hoặc lỗi database.";
+    $error = "Unable to delete user #$user_id! Probably admin or database error.";
     }
 }
 
@@ -70,7 +70,7 @@ if (isset($_POST['update_user'])) {
     $new_role_id = $_POST['role_id'] ?? null;
 
     if (!$user_id) {
-        $error = "Dữ liệu gửi từ form không hợp lệ!";
+        $error = "Invalid form data!";
     } else {
         $stmt = $conn->prepare("UPDATE users SET full_name = :full_name, phone = :phone, address = :address, role_id = :role_id 
                                 WHERE user_id = :user_id AND role_id != 1"); // Không cập nhật admin
@@ -82,9 +82,9 @@ if (isset($_POST['update_user'])) {
             ':user_id' => $user_id
         ]);
         if ($result && $stmt->rowCount() > 0) {
-            $success = "Đã cập nhật thông tin người dùng #$user_id!";
+            $success = "Updated user info #$user_id!";
         } else {
-            $error = "Không thể cập nhật người dùng #$user_id! Có thể là admin hoặc lỗi database.";
+        $error = "Unable to update user #$user_id! Probably admin or database error.";
         }
     }
 }
@@ -141,7 +141,7 @@ if (!empty($_SESSION['cart'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Người Dùng - Cửa Hàng Đồ Uống</title>
+    <title>User Management - Beverage Store</title>
     <link rel="stylesheet" href="../assets/css/global.css">
     <link rel="stylesheet" href="../assets/css/admin.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
@@ -150,19 +150,19 @@ if (!empty($_SESSION['cart'])) {
 <body>
     <div class="admin-container">
         <aside class="sidebar">
-            <h3>Quản Lý</h3>
-            <nav>
-                <a href="../index.php"><i class="fas fa-home"></i> Trang chủ</a>
-                <a href="dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                <a href="orders.php"><i class="fas fa-shopping-bag"></i> Đơn Hàng</a>
-                <a href="products.php"><i class="fas fa-box"></i> Sản Phẩm</a>
-                <a href="users.php" class="active"><i class="fas fa-users"></i> Người Dùng</a>
-                <a href="../login.php?logout=1"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
+        <h3>Management</h3> 
+            <nav> 
+            <a href="../index.php"><i class="fas fa-home"></i> Home</a> 
+            <a href="dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a> 
+            <a href="orders.php"><i class="fas fa-shopping-bag"></i> Orders</a> 
+            <a href="products.php"><i class="fas fa-box"></i> Products</a> 
+            <a href="users.php" class="active"><i class="fas fa-users"></i> Users</a> 
+            <a href="../login.php?logout=1"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
             </nav>
         </aside>
         <main class="admin-content">
             <header>
-                <h1>Quản Lý Người Dùng</h1>
+            <h1>User Management</h1>
                 <div class="hamburger" id="hamburger">
                     <i class="fas fa-bars"></i>
                 </div>
@@ -176,30 +176,30 @@ if (!empty($_SESSION['cart'])) {
 
             <!-- Form thêm người dùng -->
             <div class="add-user">
-                <h3>Thêm Người Dùng Mới</h3>
-                <form method="POST" action="" class="user-form">
-                    <input type="text" name="username" placeholder="Tên người dùng" required>
-                    <input type="email" name="email" placeholder="Email" required>
-                    <input type="text" name="full_name" placeholder="Họ và tên" required>
-                    <input type="text" name="phone" placeholder="Số điện thoại" required>
-                    <textarea name="address" placeholder="Địa chỉ" rows="3" required></textarea>
-                    <input type="password" name="password" placeholder="Mật khẩu" required>
-                    <select name="role_id">
+                    <h3>Add New User</h3> 
+                        <form method="POST" action="" class="user-form"> 
+                        <input type="text" name="username" placeholder="Username" required> 
+                        <input type="email" name="email" placeholder="Email" required> 
+                        <input type="text" name="full_name" placeholder="Full name" required> 
+                        <input type="text" name="phone" placeholder="Phone number" required> 
+                        <textarea name="address" placeholder="Address" rows="3" required></textarea> 
+                        <input type="password" name="password" placeholder="Password" required>
+                                            <select name="role_id">
                         <?php foreach ($roles as $role): ?>
                             <option value="<?php echo $role['role_id']; ?>" <?php echo $role['role_id'] == 2 ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($role['role_name']); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
-                    <button type="submit" name="add_user" class="btn-action">Thêm</button>
+                    <button type="submit" name="add_user" class="btn-action">Add</button>
                 </form>
             </div>
 
             <!-- Tìm kiếm -->
             <div class="search-bar">
                 <form method="GET" action="">
-                    <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Tìm kiếm theo tên, email, số điện thoại...">
-                    <button type="submit" class="btn-primary"><i class="fas fa-search"></i> Tìm</button>
+                <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search by name, email, phone number...">
+                <button type="submit" class="btn-primary"><i class="fas fa-search"></i> Search</button>
                 </form>
             </div>
 
@@ -207,20 +207,20 @@ if (!empty($_SESSION['cart'])) {
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Tên Người Dùng</th>
-                        <th>Họ và Tên</th>
-                        <th>Email</th>
-                        <th>Số Điện Thoại</th>
-                        <th>Địa Chỉ</th>
-                        <th>Vai Trò</th>
-                        <th>Ngày Tạo</th>
-                        <th>Hành Động</th>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>First and Last Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Address</th>
+                    <th>Role</th>
+                    <th>Date Created</th>
+                    <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($users)): ?>
-                        <tr><td colspan="9">Không tìm thấy người dùng nào!</td></tr>
+                        <tr><td colspan="9">No users found!</td></tr>
                     <?php else: ?>
                         <?php foreach ($users as $user): ?>
                             <tr>
@@ -235,12 +235,12 @@ if (!empty($_SESSION['cart'])) {
                                 </td>
                                 <td><?php echo date('d/m/Y H:i', strtotime($user['created_at'])); ?></td>
                                 <td>
-                                    <button class="view-details" data-user-id="<?php echo $user['user_id']; ?>">Xem chi tiết</button>
-                                    <?php if ($user['role_id'] != 1): // Không chỉnh sửa admin ?>
-                                        <button class="edit-user" data-user-id="<?php echo $user['user_id']; ?>">Sửa</button>
-                                        <a href="?delete_user=<?php echo $user['user_id']; ?>" class="btn-action delete-user" onclick="return confirm('Xóa người dùng này?');">Xóa</a>
-                                    <?php else: ?>
-                                        <span>Không thể chỉnh sửa</span>
+                                <button class="view-details" data-user-id="<?php echo $user['user_id']; ?>">View details</button>
+                                <?php if ($user['role_id'] != 1): // Do not edit admin ?>
+                                <button class="edit-user" data-user-id="<?php echo $user['user_id']; ?>">Edit</button>
+                                <a href="?delete_user=<?php echo $user['user_id']; ?>" class="btn-action delete-user" onclick="return confirm('Delete this user?');">Delete</a>
+                                <?php else: ?>
+                                <span>Cannot edit</span>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -253,13 +253,13 @@ if (!empty($_SESSION['cart'])) {
             <?php if ($total_pages > 1): ?>
                 <div class="pagination">
                     <?php if ($page > 1): ?>
-                        <a href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>" class="btn-secondary">« Trước</a>
+                        <a href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>" class="btn-secondary">« Back</a>
                     <?php endif; ?>
                     <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                         <a href="?page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>" class="btn-secondary <?php echo $i == $page ? 'active' : ''; ?>"><?php echo $i; ?></a>
                     <?php endfor; ?>
                     <?php if ($page < $total_pages): ?>
-                        <a href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>" class="btn-secondary">Tiếp »</a>
+                        <a href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>" class="btn-secondary">Next »</a>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
@@ -270,7 +270,7 @@ if (!empty($_SESSION['cart'])) {
     <div class="modal" id="user-modal">
         <div class="modal-content">
             <span class="close-modal">×</span>
-            <h3>Chi Tiết Người Dùng</h3>
+            <h3>User Details</h3>
             <div id="user-details"></div>
         </div>
     </div>
@@ -279,18 +279,18 @@ if (!empty($_SESSION['cart'])) {
     <div class="modal" id="edit-user-modal">
         <div class="modal-content">
             <span class="close-modal">×</span>
-            <h3>Chỉnh Sửa Người Dùng</h3>
+            <h3>Edit User</h3>
             <form method="POST" action="" class="user-form" id="edit-user-form">
                 <input type="hidden" name="user_id" id="edit-user-id">
-                <input type="text" name="full_name" id="edit-full-name" placeholder="Họ và tên" required>
-                <input type="text" name="phone" id="edit-phone" placeholder="Số điện thoại" required>
-                <textarea name="address" id="edit-address" placeholder="Địa chỉ" rows="3" required></textarea>
+                <input type="text" name="full_name" id="edit-full-name" placeholder="Full name" required> 
+                <input type="text" name="phone" id="edit-phone" placeholder="Phone number" required> 
+                <textarea name="address" id="edit-address" placeholder="Address" rows="3" required></textarea>
                 <select name="role_id" id="edit-role-id">
                     <?php foreach ($roles as $role): ?>
                         <option value="<?php echo $role['role_id']; ?>"><?php echo htmlspecialchars($role['role_name']); ?></option>
                     <?php endforeach; ?>
                 </select>
-                <button type="submit" name="update_user" class="btn-action">Lưu</button>
+                <button type="submit" name="update_user" class="btn-action">Save</button>
             </form>
         </div>
     </div>

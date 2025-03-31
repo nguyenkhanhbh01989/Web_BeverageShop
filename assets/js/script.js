@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
         addForms.forEach(form => {
             form.addEventListener('submit', function() {
                 const productName = form.querySelector('input[name="product_name"]').value;
-                showToast(`Đã thêm "${productName}" vào giỏ hàng!`);
+                showToast(`Added "${productName}" to cart!`);
                 cartIcon.classList.add('active');
                 setTimeout(() => cartIcon.classList.remove('active'), 500);
             });
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const successMessage = document.querySelector('.success-message');
         if (successMessage && successMessage.getAttribute('data-product')) {
             const productName = successMessage.getAttribute('data-product');
-            showToast(`Đã thêm "${productName}" vào giỏ hàng!`);
+            showToast(`Added "${productName}" to cart!`);
             cartIcon.classList.add('active');
             setTimeout(() => cartIcon.classList.remove('active'), 500);
         }
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const cartForm = document.querySelector('.cart-form');
     if (cartForm) {
         cartForm.addEventListener('submit', function() {
-            showToast('Đã cập nhật giỏ hàng!');
+            showToast('Cart updated!');
             cartIcon.classList.add('active');
             setTimeout(() => cartIcon.classList.remove('active'), 500);
         });
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
     removeLinks.forEach(link => {
         link.addEventListener('click', function() {
             const productName = link.getAttribute('data-product');
-            showToast(`Đã xóa "${productName}" khỏi giỏ hàng!`);
+            showToast(`Removed "${productName}" from cart!`);
             cartIcon.classList.add('active');
             setTimeout(() => cartIcon.classList.remove('active'), 500);
         });
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const placeOrderForm = document.querySelector('.place-order-form');
     if (placeOrderForm) {
         placeOrderForm.addEventListener('submit', function() {
-            showToast('Đang xử lý đơn hàng...');
+            showToast('Processing order...');
             cartIcon.classList.add('active');
             setTimeout(() => cartIcon.classList.remove('active'), 500);
         });
@@ -79,10 +79,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const cancelLinks = document.querySelectorAll('.cancel-order');
     cancelLinks.forEach(link => {
         link.addEventListener('click', function(e) {
-            if (!confirm('Bạn có chắc muốn hủy đơn hàng này?')) {
+            if (!confirm('Are you sure you want to cancel this order?')) {
                 e.preventDefault();
             } else {
-                showToast('Đang hủy đơn hàng...');
+                showToast('Cancelling order...');
             }
         });
     });
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const authForm = document.querySelector('.auth-form');
     if (authForm) {
         authForm.addEventListener('submit', function() {
-            showToast('Đang xử lý...');
+            showToast('Processing...');
         });
 
         const errorMessage = document.querySelector('.error-message');
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 orderDetails.innerHTML = data;
             })
             .catch(error => {
-                orderDetails.innerHTML = 'Lỗi khi tải chi tiết đơn hàng!';
+                orderDetails.innerHTML = 'Error loading order details!';
                 console.error('Error:', error);
             });
     }

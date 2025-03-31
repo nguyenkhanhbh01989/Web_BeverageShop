@@ -2,13 +2,14 @@
 session_start();
 include 'includes/db_connect.php';
 
-// Xử lý đăng xuất trước mọi thứ
+// Xử lý đăng xuất trước khi tải trang
 if (isset($_GET['logout'])) {
     session_unset();
     session_destroy();
-    $success = "Đã đăng xuất thành công!";
+    $success = "Successfully logged out!"; // Đã dịch sang tiếng Anh
 }
 
+// Nếu đã đăng nhập, chuyển hướng về trang chủ
 if (isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit();
@@ -19,7 +20,7 @@ if (isset($_POST['login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // JOIN bảng users và roles để lấy role_name
+    // Truy vấn để lấy thông tin người dùng và vai trò
     $stmt = $conn->prepare("SELECT u.user_id, u.username, u.password, r.role_name 
                             FROM users u 
                             JOIN roles r ON u.role_id = r.role_id 
@@ -27,18 +28,19 @@ if (isset($_POST['login'])) {
     $stmt->execute([':username' => $username]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    // Kiểm tra mật khẩu
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['username'] = $user['username'];
-        $_SESSION['role'] = $user['role_name']; // Lưu role_name (admin, customer, staff)
+        $_SESSION['role'] = $user['role_name']; // Lưu vai trò (admin, customer, staff)
         header("Location: index.php");
         exit();
     } else {
-        $error = "Tên đăng nhập hoặc mật khẩu không đúng!";
+        $error = "Incorrect username or password!"; // Đã dịch sang tiếng Anh
     }
 }
 
-// Tính tổng số lượng sản phẩm trong giỏ
+// Tính tổng số lượng sản phẩm trong giỏ hàng
 $cart_count = 0;
 if (!empty($_SESSION['cart'])) {
     foreach ($_SESSION['cart'] as $item) {
@@ -48,11 +50,11 @@ if (!empty($_SESSION['cart'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en"> <!-- Đã đổi lang từ 'vi' sang 'en' -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Nhập - Cửa Hàng Đồ Uống</title>
+    <title>Login - Beverage Shop</title> <!-- Đã dịch sang tiếng Anh -->
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/auth.css">
@@ -61,18 +63,12 @@ if (!empty($_SESSION['cart'])) {
 </head>
 <body>
     <header>
-        <h1>Cửa Hàng Đồ Uống</h1>
-        <nav>
-            <a href="index.php">Trang Chủ</a>
-            <a href="cart.php">Giỏ Hàng</a>
-            <a href="login.php">Đăng Nhập</a>
-            <a href="register.php">Đăng Ký</a>
-        </nav>
+        <?php include 'includes/header.php'; ?>
     </header>
 
     <main>
         <div class="auth-container">
-            <h2>Đăng Nhập</h2>
+            <h2>Login</h2> <!-- Đã dịch sang tiếng Anh -->
             <?php if ($error): ?>
                 <p class="error-message" style="display: none;" data-message="<?php echo htmlspecialchars($error); ?>"></p>
             <?php endif; ?>
@@ -81,16 +77,16 @@ if (!empty($_SESSION['cart'])) {
             <?php endif; ?>
             <form method="POST" action="" class="auth-form">
                 <label>
-                    Tên đăng nhập:
-                    <input type="text" name="username" required placeholder="Nhập tên đăng nhập">
+                    Username:
+                    <input type="text" name="username" required placeholder="Enter your username">
                 </label>
                 <label>
-                    Mật khẩu:
-                    <input type="password" name="password" required placeholder="Nhập mật khẩu">
+                    Password:
+                    <input type="password" name="password" required placeholder="Enter your password">
                 </label>
-                <button type="submit" name="login" class="btn-primary">Đăng Nhập</button>
+                <button type="submit" name="login" class="btn-primary">Login</button>
             </form>
-            <p class="auth-link">Chưa có tài khoản? <a href="register.php">Đăng ký ngay</a></p>
+            <p class="auth-link">Don't have an account? <a href="register.php">Register now</a></p>
         </div>
     </main>
 
@@ -104,7 +100,7 @@ if (!empty($_SESSION['cart'])) {
     <div class="toast" id="toast"></div>
 
     <footer>
-        <p>© 2025 Cửa Hàng Đồ Uống</p>
+        <p>© 2025 Beverage Shop</p> <!-- Đã dịch sang tiếng Anh -->
     </footer>
 
     <script src="assets/js/script.js"></script>

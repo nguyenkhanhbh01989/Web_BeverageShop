@@ -2,22 +2,22 @@
 session_start();
 include '../includes/db_connect.php';
 
-// Kiểm tra phân quyền
+// Check user role
 if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'staff'])) {
     header("Location: ../login.php");
     exit();
 }
 
-// Xử lý thêm sản phẩm
+// Handle adding a product
 if (isset($_POST['add_product'])) {
     $name = $_POST['name'] ?? '';
     $price = $_POST['price'] ?? 0;
     $stock = $_POST['stock'] ?? 0;
-    $category_id = $_POST['category_id'] ?? 1; // Mặc định category_id = 1 nếu không có bảng categories
+    $category_id = $_POST['category_id'] ?? 1; // Default category_id = 1 if there is no categories table
     $image = $_FILES['image']['name'] ?? '';
 
     if ($name && $price > 0 && $stock >= 0) {
-        // Xử lý upload hình ảnh
+        // Handle image upload
         if ($image) {
             $target_dir = "../assets/images/";
             $target_file = $target_dir . basename($image);
@@ -35,16 +35,16 @@ if (isset($_POST['add_product'])) {
         ]);
 
         if ($result) {
-            $success = "Đã thêm sản phẩm '$name' thành công!";
+            $success = "Product '$name' added successfully!";
         } else {
-            $error = "Lỗi khi thêm sản phẩm!";
+            $error = "Error adding product!";
         }
     } else {
-        $error = "Vui lòng điền đầy đủ thông tin hợp lệ!";
+        $error = "Please provide valid information!";
     }
 }
 
-// Xử lý sửa sản phẩm
+// Handle editing a product
 if (isset($_POST['edit_product'])) {
     $product_id = $_POST['product_id'] ?? 0;
     $name = $_POST['name'] ?? '';
@@ -63,7 +63,7 @@ if (isset($_POST['edit_product'])) {
             $target_file = $target_dir . basename($image);
             move_uploaded_file($_FILES['image']['tmp_name'], $target_file);
         } else {
-            $image = $current_image; // Giữ ảnh cũ nếu không upload ảnh mới
+            $image = $current_image; // Keep the old image if no new image is uploaded
         }
 
         $stmt = $conn->prepare("UPDATE products SET product_name = :name, price = :price, stock = :stock, 
@@ -78,29 +78,29 @@ if (isset($_POST['edit_product'])) {
         ]);
 
         if ($result) {
-            $success = "Đã cập nhật sản phẩm #$product_id thành công!";
+            $success = "Product #$product_id updated successfully!";
         } else {
-            $error = "Lỗi khi cập nhật sản phẩm!";
+            $error = "Error updating product!";
         }
     } else {
-        $error = "Vui lòng điền đầy đủ thông tin hợp lệ!";
+        $error = "Please provide valid information!";
     }
 }
 
-// Xử lý xóa sản phẩm
+// Handle deleting a product
 if (isset($_GET['delete_product'])) {
     $product_id = $_GET['delete_product'];
     $stmt = $conn->prepare("DELETE FROM products WHERE product_id = :product_id");
     $result = $stmt->execute([':product_id' => $product_id]);
 
     if ($result) {
-        $success = "Đã xóa sản phẩm #$product_id thành công!";
+        $success = "Product #$product_id deleted successfully!";
     } else {
-        $error = "Lỗi khi xóa sản phẩm!";
+        $error = "Error deleting product!";
     }
 }
 
-// Lấy danh sách sản phẩm
+// Retrieve product list
 $stmt = $conn->prepare("SELECT product_id, product_name, price, stock, category_id, image 
                         FROM products 
                         ORDER BY product_id DESC");
@@ -130,18 +130,19 @@ if (!empty($_SESSION['cart'])) {
 <body>
     <div class="admin-container">
         <aside class="sidebar">
-            <nav>
-                <a href="../index.php"><i class="fas fa-home"></i> Trang chủ</a>
-                <a href="dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                <a href="orders.php"><i class="fas fa-shopping-bag"></i> Đơn Hàng</a>
-                <a href="products.php" class="active"><i class="fas fa-box"></i> Sản Phẩm</a>
-                <a href="users.php"><i class="fas fa-users"></i> Người Dùng</a>
-                <a href="../login.php?logout=1"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
-            </nav>
-        </aside>
-        <main class="admin-content">
-            <header>
-                <h1>Quản Lý Sản Phẩm</h1>
+        <h3>Management</h3> 
+<nav> 
+<a href="../index.php"><i class="fas fa-home"></i> Home</a> 
+<a href="dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a> 
+<a href="orders.php"><i class="fas fa-shopping-bag"></i> Orders</a> 
+<a href="products.php" class="active"><i class="fas fa-box"></i> Products</a> 
+<a href="users.php"><i class="fas fa-users"></i> Users</a> 
+<a href="../login.php?logout=1"><i class="fas fa-sign-out-alt"></i> Sign Out</a> 
+</nav> 
+</aside> 
+<main class="admin-content"> 
+<header>
+<h1>Product Management</h1>
                 <div class="hamburger" id="hamburger">
                     <i class="fas fa-bars"></i>
                 </div>
@@ -154,31 +155,31 @@ if (!empty($_SESSION['cart'])) {
             <?php endif; ?>
 
             <!-- Form thêm sản phẩm -->
-            <section class="add-product">
-                <h3>Thêm Sản Phẩm Mới</h3>
-                <form method="POST" action="" enctype="multipart/form-data" class="product-form">
-                    <input type="text" name="name" placeholder="Tên sản phẩm" required>
-                    <input type="number" name="price" placeholder="Giá (VND)" min="0" required>
-                    <input type="number" name="stock" placeholder="Tồn kho" min="0" required>
-                    <input type="number" name="category_id" placeholder="ID Danh mục" value="1" min="1" required>
-                    <input type="file" name="image" accept="image/*">
-                    <button type="submit" name="add_product" class="btn-action">Thêm sản phẩm</button>
-                </form>
-            </section>
+            <section class="add-product"> 
+<h3>Add New Products</h3> 
+<form method="POST" action="" enctype="multipart/form-data" class="product-form"> 
+<input type="text" name="name" placeholder="Product name" required> 
+<input type="number" name="price" placeholder="Price (VND)" min="0" required> 
+<input type="number" name="stock" placeholder="Inventory" min="0" required> 
+<input type="number" name="category_id" placeholder="Category ID" value="1" min="1" required> 
+<input type="file" name="image" accept="image/*"> 
+<button type="submit" name="add_product" class="btn-action">Add product</button> 
+</form> 
+</section>
 
             <!-- Danh sách sản phẩm -->
             <section class="product-list">
-                <h3>Danh Sách Sản Phẩm</h3>
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Tên</th>
-                            <th>Giá</th>
-                            <th>Tồn Kho</th>
-                            <th>Danh Mục</th>
-                            <th>Hình Ảnh</th>
-                            <th>Hành Động</th>
+<h3>Product List</h3>
+<table class="admin-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Price</th>
+<th>Inventory</th>
+<th>Category</th>
+<th>Image</th>
+<th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -193,12 +194,12 @@ if (!empty($_SESSION['cart'])) {
                                     <?php if ($product['image']): ?>
                                         <img src="../assets/images/<?php echo htmlspecialchars($product['image']); ?>" alt="Product Image" style="width: 50px; height: auto;">
                                     <?php else: ?>
-                                        Không có
+                                        None
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <button class="edit-product" data-product-id="<?php echo $product['product_id']; ?>">Sửa</button>
-                                    <a href="?delete_product=<?php echo $product['product_id']; ?>" class="btn-action delete-product" onclick="return confirm('Xóa sản phẩm này?');">Xóa</a>
+                                    <button class="edit-product" data-product-id="<?php echo $product['product_id']; ?>">Edit</button>
+                                    <a href="?delete_product=<?php echo $product['product_id']; ?>" class="btn-action delete-product" onclick="return confirm('Xóa sản phẩm này?');">Delete</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -212,7 +213,7 @@ if (!empty($_SESSION['cart'])) {
     <div class="modal" id="edit-modal">
         <div class="modal-content">
             <span class="close-modal">×</span>
-            <h3>Sửa Sản Phẩm</h3>
+            <h3>Edit Product</h3>
             <form method="POST" action="" enctype="multipart/form-data" id="edit-product-form">
                 <input type="hidden" name="product_id" id="edit-product-id">
                 <input type="text" name="name" id="edit-name" placeholder="Tên sản phẩm" required>
@@ -220,7 +221,7 @@ if (!empty($_SESSION['cart'])) {
                 <input type="number" name="stock" id="edit-stock" placeholder="Tồn kho" min="0" required>
                 <input type="number" name="category_id" id="edit-category" placeholder="ID Danh mục" min="1" required>
                 <input type="file" name="image" accept="image/*">
-                <button type="submit" name="edit_product" class="btn-action">Lưu thay đổi</button>
+                <button type="submit" name="edit_product" class="btn-action">Save changes</button>
             </form>
         </div>
     </div>

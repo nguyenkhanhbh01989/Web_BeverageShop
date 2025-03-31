@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
         addForms.forEach(form => {
             form.addEventListener('submit', function() {
                 const productName = form.querySelector('input[name="product_name"]').value;
-                window.showToast(`Đã thêm "${productName}" vào giỏ hàng!`);
+                window.showToast(`Added "${productName}" to cart!`);
                 window.animateCart();
             });
         });
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const successMessage = document.querySelector('.success-message');
         if (successMessage && successMessage.getAttribute('data-product')) {
             const productName = successMessage.getAttribute('data-product');
-            window.showToast(`Đã thêm "${productName}" vào giỏ hàng!`);
+            window.showToast(`Added "${productName}" to cart!`);
             window.animateCart();
         }
     }

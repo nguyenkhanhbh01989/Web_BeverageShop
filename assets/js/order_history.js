@@ -2,10 +2,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const cancelLinks = document.querySelectorAll('.cancel-order');
     cancelLinks.forEach(link => {
         link.addEventListener('click', function(e) {
-            if (!confirm('Bạn có chắc muốn hủy đơn hàng này?')) {
+            if (!confirm('Are you sure you want to cancel this order?')) {
                 e.preventDefault();
             } else {
-                window.showToast('Đang hủy đơn hàng...');
+                window.showToast('Cancelling order...');
             }
         });
     });
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('order-details').innerHTML = data;
             })
             .catch(error => {
-                document.getElementById('order-details').innerHTML = 'Lỗi khi tải chi tiết đơn hàng!';
+                document.getElementById('order-details').innerHTML = 'Error loading order details!';
                 console.error('Error:', error);
             });
     }

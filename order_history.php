@@ -64,13 +64,7 @@ if (!empty($_SESSION['cart'])) {
 </head>
 <body>
     <header>
-        <h1>Cửa Hàng Đồ Uống</h1>
-        <nav>
-            <a href="index.php">Trang Chủ</a>
-            <a href="cart.php">Giỏ Hàng</a>
-            <a href="order_history.php">Lịch Sử Đơn Hàng</a>
-            <a href="login.php?logout=1">Đăng Xuất</a>
-        </nav>
+    <?php include 'includes/header.php'; ?>
     </header>
 
     <main>

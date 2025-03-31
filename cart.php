@@ -2,7 +2,7 @@
 session_start();
 include 'includes/db_connect.php';
 
-// Xử lý xóa sản phẩm
+// Xử lý xóa sản phẩm khỏi giỏ hàng
 if (isset($_GET['remove'])) {
     $product_id = $_GET['remove'];
     unset($_SESSION['cart'][$product_id]);
@@ -10,13 +10,14 @@ if (isset($_GET['remove'])) {
     exit();
 }
 
-// Xử lý cập nhật số lượng
+// Xử lý cập nhật số lượng sản phẩm trong giỏ hàng
 if (isset($_POST['update_cart'])) {
     foreach ($_POST['quantity'] as $product_id => $quantity) {
         $stmt = $conn->prepare("SELECT stock FROM products WHERE product_id = :id");
         $stmt->execute([':id' => $product_id]);
         $stock = $stmt->fetchColumn();
 
+        // Kiểm tra số lượng hợp lệ
         if ($quantity <= 0 || $quantity > $stock) {
             unset($_SESSION['cart'][$product_id]);
         } else {
@@ -27,7 +28,7 @@ if (isset($_POST['update_cart'])) {
     exit();
 }
 
-// Tính tổng số lượng sản phẩm trong giỏ
+// Tính tổng số lượng sản phẩm trong giỏ hàng
 $cart_count = 0;
 if (!empty($_SESSION['cart'])) {
     foreach ($_SESSION['cart'] as $item) {
@@ -37,11 +38,11 @@ if (!empty($_SESSION['cart'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giỏ Hàng - Cửa Hàng Đồ Uống</title>
+    <title>Shopping Cart - Beverage Store</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/cart.css">
@@ -50,35 +51,24 @@ if (!empty($_SESSION['cart'])) {
 </head>
 <body>
     <header>
-        <h1>Cửa Hàng Đồ Uống</h1>
-        <nav>
-            <a href="index.php">Trang Chủ</a>
-            <a href="cart.php">Giỏ Hàng</a>
-            <?php if (isset($_SESSION['username'])): ?>
-                <a href="order_history.php">Lịch Sử Đơn Hàng</a>
-                <a href="login.php?logout=1">Đăng Xuất</a>
-            <?php else: ?>
-                <a href="login.php">Đăng Nhập</a>
-                <a href="register.php">Đăng Ký</a>
-            <?php endif; ?>
-        </nav>
+    <?php include 'includes/header.php'; ?>
     </header>
 
     <main>
-        <h2>Giỏ Hàng</h2>
+        <h2>Shopping Cart</h2>
         <?php if (empty($_SESSION['cart'])): ?>
-            <p class="empty-cart">Giỏ hàng của bạn đang trống! <a href="index.php">Tiếp tục mua sắm</a>.</p>
+            <p class="empty-cart">Your cart is empty! <a href="index.php">Continue Shopping</a>.</p>
         <?php else: ?>
             <form method="POST" action="" class="cart-form">
                 <table class="cart-table">
                     <thead>
                         <tr>
-                            <th>Sản phẩm</th>
-                            <th>Giá</th>
-                            <th>Số lượng</th>
-                            <th>Tồn kho</th>
-                            <th>Tổng</th>
-                            <th>Hành động</th>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Stock</th>
+                            <th>Total</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -103,23 +93,23 @@ if (!empty($_SESSION['cart'])) {
                             echo '<td>' . $stock . '</td>';
                             echo '<td>' . number_format($subtotal, 0, ',', '.') . ' VND</td>';
                             echo '<td>';
-                            echo '<button type="submit" name="update_cart">Cập nhật</button>';
-                            echo '<a href="?remove=' . $product_id . '" class="remove-item" data-product="' . htmlspecialchars($item['name']) . '">Xóa</a>';
+                            echo '<button type="submit" name="update_cart">Update</button>';
+                            echo '<a href="?remove=' . $product_id . '" class="remove-item" data-product="' . htmlspecialchars($item['name']) . '">Remove</a>';
                             echo '</td>';
                             echo '</tr>';
                         }
                         ?>
                         <tr>
-                            <td colspan="4">Tổng cộng</td>
+                            <td colspan="4">Total</td>
                             <td><?php echo number_format($total, 0, ',', '.') . ' VND'; ?></td>
                             <td></td>
                         </tr>
                     </tbody>
                 </table>
                 <div class="cart-actions">
-                    <a href="index.php" class="btn-secondary">Tiếp tục mua sắm</a>
+                    <a href="index.php" class="btn-secondary">Continue Shopping</a>
                     <a href="checkout.php" class="btn-primary <?php echo $can_checkout ? '' : 'disabled'; ?>">
-                        <?php echo $can_checkout ? 'Tiếp tục đặt hàng' : 'Không thể đặt (hết hàng)'; ?>
+                        <?php echo $can_checkout ? 'Proceed to Checkout' : 'Cannot Checkout (Out of Stock)'; ?>
                     </a>
                 </div>
             </form>
@@ -136,10 +126,10 @@ if (!empty($_SESSION['cart'])) {
     <div class="toast" id="toast"></div>
 
     <footer>
-        <p>© 2025 Cửa Hàng Đồ Uống</p>
+        <p>© 2025 Beverage Store</p>
     </footer>
 
     <script src="assets/js/common.js"></script>
-<script src="assets/js/cart.js"></script>
+    <script src="assets/js/cart.js"></script>
 </body>
 </html>

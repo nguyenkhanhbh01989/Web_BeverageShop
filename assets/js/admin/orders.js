@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('order-details').innerHTML = data;
             })
             .catch(error => {
-                document.getElementById('order-details').innerHTML = `Lỗi khi tải chi tiết đơn hàng: ${error.message}`;
+                document.getElementById('order-details').innerHTML = `Error loading order details: ${error.message}`;
                 console.error('Error:', error);
             });
     }
