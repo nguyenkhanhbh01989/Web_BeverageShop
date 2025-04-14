@@ -1,5 +1,5 @@
 <?php
-session_start();
+//session_start();
 include 'db_connect.php';
 
 $full_name = '';
@@ -12,7 +12,7 @@ if (isset($_SESSION['user_id'])) {
 ?>
 
 <header>
-    <h1>Beverage Shop</h1> <!-- Tiêu đề trang -->
+    <h1>Choén Food</h1> <!-- Tiêu đề trang -->
     <nav>
         <?php if (isset($_SESSION['role']) && ($_SESSION['role'] == 'admin' || $_SESSION['role'] == 'staff')): ?>
             <a href="admin/dashboard.php">Admin Panel</a> <!-- Link đến trang quản lý -->

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th3 23, 2025 lúc 04:32 PM
+-- Thời gian đã tạo: Th3 31, 2025 lúc 10:04 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -54,7 +54,7 @@ CREATE TABLE `orders` (
   `user_id` int(11) DEFAULT NULL,
   `order_date` datetime DEFAULT current_timestamp(),
   `total_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `status` enum('pending','confirmed','rejected','delivered','cancelled') NOT NULL DEFAULT 'pending',
+  `status` varchar(50) NOT NULL,
   `payment_method` varchar(50) NOT NULL DEFAULT 'cod',
   `address` text NOT NULL,
   `note` text DEFAULT NULL
@@ -65,22 +65,16 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `total_amount`, `status`, `payment_method`, `address`, `note`) VALUES
-(1, 2, '2025-03-20 20:31:14', 0.00, 'rejected', 'cod', '', NULL),
-(2, 3, '2025-03-20 20:31:58', 0.00, 'rejected', 'cod', '', NULL),
-(3, 3, '2025-03-20 20:36:37', 0.00, 'confirmed', 'cod', '', NULL),
-(5, 1, '2025-03-20 21:12:26', 68000.00, 'rejected', 'cod', '', NULL),
-(6, 1, '2025-03-20 21:12:34', 15000.00, 'rejected', 'cod', '', NULL),
-(7, 1, '2025-03-20 21:27:06', 129000.00, 'confirmed', 'cod', '', NULL),
-(8, 1, '2025-03-20 22:41:11', 104000.00, 'confirmed', 'cod', '', NULL),
-(9, 1, '2025-03-20 23:55:25', 138000.00, 'rejected', 'cod', '', NULL),
-(10, 3, '2025-03-21 00:45:29', 59000.00, 'cancelled', 'cod', '', NULL),
-(11, 3, '2025-03-21 01:15:07', 15000.00, 'cancelled', 'cod', '', NULL),
-(12, 3, '2025-03-21 01:45:52', 80000.00, 'cancelled', 'cod', '', NULL),
-(13, 3, '2025-03-21 01:49:46', 56000.00, 'cancelled', 'cod', '168 Nguyen Dong Chi , Ha Npi', 'fdghfd'),
-(14, 6, '2025-03-21 16:57:05', 113000.00, 'confirmed', 'cod', '168 Nguyen Dong Chi , Ha Npi', ''),
-(15, 2, '2025-03-21 17:19:58', 50000.00, 'confirmed', 'cod', '168 Nguyen Dong Chi , Ha Npi', 'it da giup em'),
-(16, 2, '2025-03-21 20:00:21', 25000.00, 'cancelled', 'momo', '168 Nguyen Dong Chi , Ha Npi', ''),
-(17, 2, '2025-03-21 22:34:13', 42000.00, 'rejected', 'cod', '168 Nguyen Dong Chi , Ha Npi', 'it da');
+(35, 1, '2025-03-28 20:00:08', 75000.00, '', 'cod', '168 Nguyen Dong Chi , Ha Npi', 'aaa'),
+(36, 1, '2025-03-28 20:01:58', 75000.00, 'cancelled', 'cod', 'fg n ', ''),
+(37, 1, '2025-03-28 20:07:58', 154000.00, '', 'cod', '168 Nguyen Dong Chi , Ha Npi', 'aa'),
+(38, 1, '2025-03-28 20:10:25', 15000.00, 'processing', 'cod', 'sẻhm', ''),
+(39, 1, '2025-03-28 20:15:54', 14000.00, 'Completed', 'cod', 'xd', ''),
+(40, 1, '2025-03-28 20:23:09', 150000.00, 'Completed', 'cod', '168 Nguyen Dong Chi , Ha Npi', 'a'),
+(41, 1, '2025-03-29 07:30:37', 25000.00, 'Completed', 'cod', '168 Nguyen Dong Chi , Ha Npi', '00'),
+(42, 1, '2025-03-29 18:23:18', 20000.00, 'Completed', 'cod', '168 Nguyen Dong Chi , Ha Npi', 'â'),
+(43, 1, '2025-03-29 19:09:41', 42000.00, 'Completed', 'cod', '168 Nguyen Dong Chi , Ha Npi', 'ứed'),
+(44, 1, '2025-03-30 22:32:47', 325000.00, 'Cancelled', 'cod', '168 Nguyen Dong Chi , Ha Npi', '');
 
 -- --------------------------------------------------------
 
@@ -101,50 +95,16 @@ CREATE TABLE `order_details` (
 --
 
 INSERT INTO `order_details` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES
-(1, 1, 2, 4, 14000.00),
-(2, 1, 3, 1, 25000.00),
-(3, 1, 4, 1, 10000.00),
-(4, 2, 1, 4, 15000.00),
-(5, 2, 2, 4, 14000.00),
-(6, 2, 3, 1, 25000.00),
-(7, 2, 4, 1, 10000.00),
-(8, 2, 5, 1, 20000.00),
-(9, 3, 1, 4, 15000.00),
-(10, 3, 2, 3, 14000.00),
-(11, 3, 3, 2, 25000.00),
-(12, 3, 4, 1, 10000.00),
-(13, 3, 5, 1, 20000.00),
-(15, 5, 2, 2, 14000.00),
-(16, 5, 1, 1, 15000.00),
-(17, 5, 3, 1, 25000.00),
-(18, 6, 1, 1, 15000.00),
-(19, 7, 1, 1, 15000.00),
-(20, 7, 2, 1, 14000.00),
-(21, 7, 3, 2, 25000.00),
-(22, 7, 4, 1, 10000.00),
-(23, 7, 5, 2, 20000.00),
-(24, 8, 1, 1, 15000.00),
-(25, 8, 2, 1, 14000.00),
-(26, 8, 3, 1, 25000.00),
-(27, 8, 4, 1, 10000.00),
-(28, 8, 5, 2, 20000.00),
-(29, 9, 1, 2, 15000.00),
-(30, 9, 2, 2, 14000.00),
-(31, 9, 3, 2, 25000.00),
-(32, 9, 4, 1, 10000.00),
-(33, 9, 5, 1, 20000.00),
-(34, 10, 2, 1, 14000.00),
-(35, 10, 4, 2, 10000.00),
-(36, 10, 3, 1, 25000.00),
-(37, 11, 1, 1, 15000.00),
-(38, 12, 5, 4, 20000.00),
-(39, 13, 2, 4, 14000.00),
-(40, 14, 1, 4, 15000.00),
-(41, 14, 2, 2, 14000.00),
-(42, 14, 3, 1, 25000.00),
-(43, 15, 8, 2, 25000.00),
-(44, 16, 8, 1, 25000.00),
-(45, 17, 2, 3, 14000.00);
+(76, 35, 1, 5, 15000.00),
+(77, 36, 3, 3, 25000.00),
+(78, 37, 2, 11, 14000.00),
+(79, 38, 1, 1, 15000.00),
+(80, 39, 2, 1, 14000.00),
+(81, 40, 3, 6, 25000.00),
+(82, 41, 8, 1, 25000.00),
+(83, 42, 5, 1, 20000.00),
+(84, 43, 2, 3, 14000.00),
+(85, 44, 3, 13, 25000.00);
 
 -- --------------------------------------------------------
 
@@ -169,12 +129,12 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`product_id`, `category_id`, `product_name`, `price`, `size`, `flavor`, `stock`, `image`, `description`) VALUES
-(1, 1, 'Coca-Cola', 15000.00, '330ml', 'Original', 91, 'coca.jpg', 'Nước ngọt có ga Coca-Cola'),
-(2, 1, 'Pepsi', 14000.00, '330ml', 'Original', 66, 'pepsi.jpg', 'Nước ngọt có ga Pepsi'),
-(3, 2, 'Red Bull', 25000.00, '250ml', 'Original', 43, 'redbull.jpg', 'Nước tăng lực Red Bull'),
-(4, 3, 'Trà xanh không độ', 10000.00, '500ml', 'Trà xanh', 115, 'tra_xanh.jpg', 'Trà xanh không đường'),
-(5, 4, 'Cà phê sữa đá', 20000.00, '250ml', 'Cà phê sữa', 51, 'cafe_sua.jpg', 'Cà phê sữa đá đóng chai'),
-(8, 3, 'Trà sữa trân châu đường đen', 25000.00, '350ml', 'Thơm mùi trà và đậm vị sữa, chân trâu thì dai giòn', 19, 'tra_sua.png', 'Món Bét Seo Lơ của quán em , đặt nhanh kẻo hết hàng ạ ! ');
+(1, 1, 'Coca-Cola', 15000.00, '330ml', 'Original', 53, 'coca.jpg', 'Nước ngọt có ga Coca-Cola'),
+(2, 1, 'Pepsi', 14000.00, '330ml', 'Original', 36, 'pepsi.jpg', 'Nước ngọt có ga Pepsi'),
+(3, 2, 'Red Bull', 25000.00, '250ml', 'Original', 7, 'redbull.jpg', 'Nước tăng lực Red Bull'),
+(4, 3, 'Trà xanh không độ', 10000.00, '500ml', 'Trà xanh', 91, 'tra_xanh.jpg', 'Trà xanh không đường'),
+(5, 4, 'Cà phê sữa đá', 20000.00, '250ml', 'Cà phê sữa', 50, 'cafe_sua.jpg', 'Cà phê sữa đá đóng chai'),
+(8, 3, 'Trà sữa trân châu đường đen', 25000.00, '350ml', 'Thơm mùi trà và đậm vị sữa, chân trâu thì dai giòn', 0, 'tra_sua.png', 'Món Bét Seo Lơ của quán em , đặt nhanh kẻo hết hàng ạ ! ');
 
 -- --------------------------------------------------------
 
@@ -207,19 +167,27 @@ CREATE TABLE `users` (
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   `email` varchar(100) DEFAULT NULL,
-  `role_id` int(11) DEFAULT NULL
+  `full_name` varchar(100) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `role_id` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `users`
 --
 
-INSERT INTO `users` (`user_id`, `username`, `password`, `email`, `role_id`) VALUES
-(1, 'admin', '$2y$10$V2V.PVYggxtz0Y.yAIUwK./YR5.FbUvhqruR66pgb8fjPZ4aQglH6', 'admin@example.com', 1),
-(2, 'staff1', '$2y$10$EYPg7B4emGoyZBqJ2jG3JuMa1B4zpg3g4kfB3Jh2xpFOB.TJkpidG', 'staff1@gmail.com', 3),
-(3, 'customer1', '$2y$10$i0abnm7xXvOCOIDDA.hELeoR//yp5ZFKb5tHHs1sJQ4p6py.2QB7u', 'customer@example.com', 2),
-(5, 'customer3', '$2y$10$4gnqPObbmvrCjE6mldj/s.c6H3hQ5s6hOBT8WDT3vY9y3K/vrYHVW', 'customer3@gmail.com', 2),
-(6, 'customer2', '$2y$10$DpxcNMrOl7VXkmht7hobpuXqIOwaBaMnKAU2SQlX2obhc7Yvk2UPm', 'customer2@gmail.com', 2);
+INSERT INTO `users` (`user_id`, `username`, `password`, `email`, `full_name`, `phone`, `address`, `role_id`, `created_at`) VALUES
+(1, 'admin', '$2y$10$V2V.PVYggxtz0Y.yAIUwK./YR5.FbUvhqruR66pgb8fjPZ4aQglH6', 'admin@example.com', NULL, NULL, NULL, 1, '2025-03-29 13:16:11'),
+(2, 'staff1', '$2y$10$EYPg7B4emGoyZBqJ2jG3JuMa1B4zpg3g4kfB3Jh2xpFOB.TJkpidG', 'staff1@gmail.com', NULL, NULL, NULL, 3, '2025-03-29 13:16:11'),
+(3, 'customer1', '$2y$10$i0abnm7xXvOCOIDDA.hELeoR//yp5ZFKb5tHHs1sJQ4p6py.2QB7u', 'customer@example.com', NULL, NULL, NULL, 2, '2025-03-29 13:16:11'),
+(5, 'customer3', '$2y$10$4gnqPObbmvrCjE6mldj/s.c6H3hQ5s6hOBT8WDT3vY9y3K/vrYHVW', 'customer3@gmail.com', NULL, NULL, NULL, 2, '2025-03-29 13:16:11'),
+(6, 'customer2', '$2y$10$DpxcNMrOl7VXkmht7hobpuXqIOwaBaMnKAU2SQlX2obhc7Yvk2UPm', 'customer2@gmail.com', NULL, NULL, NULL, 2, '2025-03-29 13:16:11'),
+(10, '2', '$2y$10$jg8pVhu8TkCANUElGHyl8e7TVbyPr00BRZcMVb9Tmwpoe0Lavpyh6', '2@gmail.com', NULL, NULL, NULL, 2, '2025-03-29 13:16:11'),
+(11, '1', '$2y$10$7J31E.a4VOY0htyiU5XzMuzrzpZvOGfnHHYzjcAUJRun7.iPfUeqK', '1@gmail.com', NULL, NULL, NULL, 3, '2025-03-29 13:19:57'),
+(12, '3', '$2y$10$iYRZdJF1Pe1rpVJEzSiMIeEov4SfNUXQ8fE4dByZCXY8ZJqzlKTQK', '3@gmail.com', NULL, NULL, NULL, 2, '2025-03-29 13:38:37'),
+(14, 'Hòa', '$2y$10$rHTzK8Jk9jYX/EuYIf9Ozu75RRkQKjA41tpwkUh5NURpEgyrJtrcu', 'hoa@gmail.com', 'Đình Văn Hòa', '0123443210', 'Thanh Hóa', 2, '2025-03-30 15:40:05');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -283,13 +251,13 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT cho bảng `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT cho bảng `order_details`
 --
 ALTER TABLE `order_details`
-  MODIFY `order_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `order_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
 
 --
 -- AUTO_INCREMENT cho bảng `products`
@@ -307,7 +275,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT cho bảng `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- Các ràng buộc cho các bảng đã đổ

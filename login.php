@@ -36,7 +36,7 @@ if (isset($_POST['login'])) {
         header("Location: index.php");
         exit();
     } else {
-        $error = "Incorrect username or password!"; // Đã dịch sang tiếng Anh
+        $error = "Incorrect username or password!";
     }
 }
 

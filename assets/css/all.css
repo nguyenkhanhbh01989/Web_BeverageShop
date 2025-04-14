@@ -1,0 +1,1380 @@
+/* Admin.css */
+
+
+/* 
+ * File: admin.css
+ * Mục đích: Định nghĩa kiểu dáng cho các trang quản trị trong thư mục admin/ (dashboard.php, orders.php, products.php, users.php).
+ * Sử dụng: Nạp trong các file PHP trong admin/ cùng với global.css.
+ * Gộp lại khi triển khai: Kết hợp với global.css và các file khác.
+ */
+
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    margin-top: 50px;
+    width: 250px;
+    background-color: #003D47;
+    color: #FFFFFF;
+    padding: 20px;
+    position: fixed;
+    height: 100%;
+    transition: transform 0.3s ease;
+}
+
+.sidebar h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.sidebar nav a {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 16px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar nav a i {
+    margin-right: 10px;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.active {
+    background-color: #F47920;
+}
+
+.admin-content {
+    flex: 1;
+    padding: 20px;
+    margin-left: 300px;
+    background-color: #F5F6F5;
+}
+
+.admin-content header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.admin-content h1 {
+    text-align: left;
+    padding-left: 30px;
+}
+
+.admin-content h1 {
+    font-size: 28px;
+    color: #005662;
+}
+
+.hamburger {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #005662;
+}
+
+
+/* Dashboard */
+
+.welcome {
+    margin-bottom: 20px;
+}
+
+.welcome h2 {
+    font-size: 24px;
+    color: #005662;
+}
+
+.welcome p {
+    font-size: 16px;
+    color: #555;
+}
+
+.notification {
+    background-color: #FFF3E0;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 20px 0;
+    color: #F47920;
+    font-weight: 500;
+}
+
+.notification a {
+    color: #005662;
+    text-decoration: underline;
+}
+
+.notification a:hover {
+    color: #003D47;
+}
+
+.dashboard-stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.stat-card {
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+}
+
+.stat-card h3 {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.stat-card p {
+    font-size: 24px;
+    color: #F47920;
+    font-weight: 600;
+}
+
+
+/* Admin Table */
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 15px;
+    border-bottom: 1px solid #EDEDED;
+    text-align: center;
+}
+
+.admin-table th {
+    background-color: #005662;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.admin-table .status-processing {
+    color: #F47920;
+}
+
+.admin-table .status-completed {
+    color: #28A745;
+}
+
+.admin-table .status-cancelled {
+    color: #D32F2F;
+}
+
+.admin-table .view-details {
+    background-color: #005662;
+    color: #FFFFFF;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.admin-table .view-details:hover {
+    background-color: #003D47;
+}
+
+.admin-table select {
+    padding: 5px;
+    border: 1px solid #EDEDED;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    cursor: pointer;
+}
+
+
+/* Nút hành động */
+
+.btn-action {
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin: 0 5px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.confirm-order {
+    background-color: #28A745;
+    color: #FFFFFF;
+}
+
+.confirm-order:hover {
+    background-color: #218838;
+}
+
+.reject-order {
+    background-color: #D32F2F;
+    color: #FFFFFF;
+}
+
+.reject-order:hover {
+    background-color: #C62828;
+}
+
+
+/* Products */
+
+.add-product {
+    margin: 20px 0;
+}
+
+.product-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.product-form input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex: 1;
+    min-width: 150px;
+}
+
+.product-form button {
+    background-color: #28A745;
+    color: #FFFFFF;
+    padding: 8px 15px;
+}
+
+.product-form button:hover {
+    background-color: #218838;
+}
+
+.admin-table img {
+    border-radius: 5px;
+}
+
+.edit-product {
+    background-color: #007BFF;
+    color: #FFFFFF;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-product:hover {
+    background-color: #0056B3;
+}
+
+.delete-product {
+    background-color: #D32F2F;
+    color: #FFFFFF;
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        z-index: 1000;
+    }
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    .admin-content {
+        margin-left: 0;
+    }
+    .hamburger {
+        display: block;
+    }
+    .admin-table {
+        display: block;
+        overflow-x: auto;
+    }
+    .admin-table td,
+    .admin-table th {
+        font-size: 14px;
+    }
+}
+
+
+/* Modal */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+}
+
+.modal-content {
+    background-color: #FFFFFF;
+    margin: 10% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: slideIn 0.3s ease;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+}
+
+.close-modal:hover {
+    color: #D32F2F;
+}
+
+#order-details table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#order-details table th,
+#order-details table td {
+    padding: 10px;
+    border-bottom: 1px solid #EDEDED;
+    text-align: left;
+}
+
+#order-details table th {
+    background-color: #F5F6F5;
+    color: #005662;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+
+/* Điều chỉnh bảng */
+
+.admin-table th,
+.admin-table td {
+    padding: 10px;
+    /* Giảm padding để chứa nhiều cột */
+    font-size: 14px;
+    /* Giảm kích thước chữ nếu cần */
+}
+
+
+/* Form thêm người dùng */
+
+.user-form textarea {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex: 1;
+    min-width: 150px;
+    resize: vertical;
+}
+
+
+/* Nút sửa */
+
+.edit-user {
+    background-color: #F47920 !important;
+    color: #FFFFFF !important;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.edit-user:hover {
+    background-color: #E06B1A;
+}
+
+
+/* Form trong modal */
+
+#edit-user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#edit-user-form input,
+#edit-user-form select,
+#edit-user-form textarea {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#edit-user-form textarea {
+    resize: vertical;
+}
+
+#edit-user-form button {
+    background-color: #28A745;
+    /* Màu xanh lá */
+    color: #FFFFFF;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#edit-user-form button:hover {
+    background-color: #218838;
+}
+
+
+/* Auth.css */
+
+
+/* 
+ * File: auth.css
+ * Mục đích: Định nghĩa kiểu dáng cho trang đăng nhập (login.php) và đăng ký (register.php).
+ * Sử dụng: Nạp trong login.php và register.php cùng với global.css.
+ * Gộp lại khi triển khai: Kết hợp với global.css và các file khác.
+ */
+
+.auth-container {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 30px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.auth-container h2 {
+    color: #005662;
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.auth-form label {
+    display: block;
+    text-align: left;
+    margin-bottom: 15px;
+    color: #555;
+    font-weight: 500;
+}
+
+.auth-form input[type="text"],
+.auth-form input[type="password"],
+.auth-form input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #EDEDED;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.auth-form input[type="text"]:focus,
+.auth-form input[type="password"]:focus,
+.auth-form input[type="email"]:focus {
+    border-color: #F47920;
+    box-shadow: 0 0 5px rgba(244, 121, 32, 0.5);
+    outline: none;
+}
+
+.auth-form .btn-primary {
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-size: 16px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.auth-link {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #666;
+}
+
+.auth-link a {
+    color: #F47920;
+    text-decoration: none;
+}
+
+.auth-link a:hover {
+    text-decoration: underline;
+}
+
+
+/* Responsive */
+
+@media (max-width: 480px) {
+    .auth-container {
+        width: 90%;
+        padding: 20px;
+    }
+}
+
+
+/* 
+ * File: cart.css
+ * Mục đích: Định nghĩa kiểu dáng cho trang giỏ hàng (cart.php).
+ * Sử dụng: Nạp trong cart.php cùng với global.css.
+ * Gộp lại khi triển khai: Kết hợp với global.css và các file khác.
+ */
+
+.cart-table {
+    border-collapse: collapse;
+    margin: 20px auto;
+    width: 100%;
+    max-width: 1200px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.cart-table th,
+.cart-table td {
+    padding: 15px;
+    border-bottom: 1px solid #EDEDED;
+    text-align: center;
+}
+
+.cart-table th {
+    background-color: #005662;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.cart-table input[type="number"] {
+    padding: 5px;
+    border: 1px solid #EDEDED;
+    border-radius: 5px;
+    width: 60px;
+    text-align: center;
+}
+
+.cart-table button {
+    background-color: #F47920;
+    color: #FFFFFF;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+.cart-table .remove-item {
+    color: #D32F2F;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.cart-table .remove-item:hover {
+    text-decoration: underline;
+}
+
+.cart-actions {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+.empty-cart {
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+}
+
+.empty-cart a {
+    color: #F47920;
+    text-decoration: none;
+}
+
+.empty-cart a:hover {
+    text-decoration: underline;
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .cart-table {
+        display: block;
+        overflow-x: auto;
+    }
+    .cart-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+
+/* 
+ * File: checkout.css
+ * Mục đích: Định nghĩa kiểu dáng cho trang thanh toán (checkout.php).
+ * Sử dụng: Nạp trong checkout.php cùng với global.css.
+ * Gộp lại khi triển khai: Kết hợp với global.css và các file khác.
+ */
+
+.checkout-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 20px auto;
+    gap: 30px;
+}
+
+.checkout-items,
+.checkout-form {
+    flex: 1;
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.checkout-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.checkout-table th,
+.checkout-table td {
+    padding: 15px;
+    border-bottom: 1px solid #EDEDED;
+    text-align: center;
+}
+
+.checkout-table th {
+    background-color: #005662;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.checkout-form h3 {
+    color: #005662;
+    margin-bottom: 15px;
+}
+
+.shipping-info label,
+.payment-options label {
+    display: block;
+    margin-bottom: 15px;
+    color: #555;
+}
+
+.shipping-info input[type="text"],
+.shipping-info textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #EDEDED;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.shipping-info textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.payment-options input[type="radio"] {
+    margin-right: 10px;
+}
+
+.checkout-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.error-message {
+    text-align: center;
+    color: #D32F2F;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .checkout-container {
+        flex-direction: column;
+    }
+    .checkout-items,
+    .checkout-form {
+        width: 100%;
+    }
+    .checkout-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+    }
+}
+
+
+/* 
+ * File: global.css
+ * Mục đích: Định nghĩa các kiểu dáng chung cho toàn bộ dự án (header, footer, nút, toast, cart icon, animations).
+ * Sử dụng: Nạp trong tất cả các trang cùng với file CSS đặc thù của trang đó.
+ * Gộp lại khi triển khai: Kết hợp với các file khác thành một file duy nhất (ví dụ: all.min.css) bằng Gulp/Webpack.
+ * Màu chủ đạo: Cam (#F47920), Xanh đậm (#005662), Xám nhạt (#F5F6F5).
+ * Font: Poppins từ Google Fonts.
+ */
+
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #F5F6F5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background-color: #ec911c;
+    color: #FFFFFF;
+    padding: 15px 0;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(244, 131, 3, 0.3);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 600;
+}
+
+nav {
+    margin-top: 10px;
+}
+
+nav a {
+    color: #FFFFFF;
+    text-decoration: none;
+    margin: 0 15px;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+nav a:hover {
+    color: #F47920;
+}
+
+main {
+    padding: 20px;
+    margin-top: 100px;
+    flex: 1;
+    background-color: #FFFFFF;
+}
+
+footer {
+    background-color: #db6307;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 14px;
+}
+
+
+/* Floating Cart Icon */
+
+.cart-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #F47920;
+    color: #FFFFFF;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    font-size: 24px;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.cart-icon:hover {
+    transform: scale(1.1);
+}
+
+.cart-icon .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #D32F2F;
+    color: #FFFFFF;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.cart-icon.active {
+    animation: shake 0.5s ease;
+}
+
+
+/* Toast Notification */
+
+.toast {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background-color: #28A745;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    z-index: 2000;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    max-width: 300px;
+    font-size: 14px;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* Nút chung */
+
+.btn-primary,
+.btn-secondary {
+    display: inline-block;
+    padding: 12px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary {
+    background-color: #F47920;
+    color: #FFFFFF;
+}
+
+.btn-primary:hover {
+    background-color: #D95F0E;
+    transform: scale(1.05);
+}
+
+.btn-primary.disabled {
+    background-color: #B0BEC5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary {
+    background-color: #EDEDED;
+    color: #005662;
+}
+
+.btn-secondary:hover {
+    background-color: #D3D3D3;
+    transform: scale(1.05);
+}
+
+
+/* Animation chung */
+
+@keyframes shake {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.success-message {
+    text-align: center;
+    color: #28A745;
+    font-weight: bold;
+    margin-bottom: 20px;
+    animation: fadeIn 0.5s ease;
+}
+
+
+/* Responsive chung */
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 24px;
+    }
+    nav a {
+        margin: 0 10px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cart-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+    .cart-icon .badge {
+        width: 16px;
+        height: 16px;
+        font-size: 10px;
+    }
+    .toast {
+        bottom: 70px;
+        right: 10px;
+        max-width: 80%;
+    }
+}
+
+
+/* 
+ * File: home.css
+ * Mục đích: Định nghĩa kiểu dáng cho trang chủ (index.php) và trang chi tiết sản phẩm (product_detail.php).
+ * Sử dụng: Nạp trong index.php và product_detail.php cùng với global.css.
+ * Gộp lại khi triển khai: Kết hợp với global.css và các file khác.
+ */
+
+
+/* Trang chủ */
+
+.product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.product {
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.product:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.product img {
+    max-width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
+}
+
+.product:hover img {
+    transform: scale(1.05);
+}
+
+.product h3 {
+    font-size: 20px;
+    margin: 10px 0;
+    color: #005662;
+    font-weight: 600;
+}
+
+.product h3 a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.product h3 a:hover {
+    color: #F47920;
+}
+
+.product p {
+    font-size: 14px;
+    color: #666;
+    margin: 5px 0;
+}
+
+.product button {
+    background-color: #F47920;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.product button:hover {
+    background-color: #D95F0E;
+    transform: scale(1.05);
+}
+
+
+/* Trang chi tiết sản phẩm */
+
+.product-detail {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 30px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    align-items: center;
+}
+
+.product-detail img {
+    max-width: 100%;
+    width: 350px;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.product-detail:hover img {
+    transform: scale(1.05);
+}
+
+.product-detail h2 {
+    font-size: 28px;
+    color: #005662;
+    margin: 10px 0;
+    font-weight: 600;
+    width: 100%;
+}
+
+.product-detail .category,
+.product-detail .size {
+    font-size: 16px;
+    color: #666;
+    margin: 5px 0;
+}
+
+.product-detail .price {
+    font-size: 22px;
+    color: #F47920;
+    font-weight: 500;
+    margin: 10px 0;
+}
+
+.product-detail .stock {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.product-detail .stock.in-stock {
+    color: #28A745;
+}
+
+.product-detail .stock.out-stock {
+    color: #D32F2F;
+}
+
+.product-detail .btn-primary {
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-size: 16px;
+    width: auto;
+    display: inline-block;
+}
+
+.product-detail .btn-primary:disabled {
+    background-color: #B0BEC5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.product-detail .error-message {
+    color: #D32F2F;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .product-list {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        padding: 10px;
+    }
+    .product {
+        padding: 15px;
+    }
+    .product img {
+        height: 150px;
+    }
+    .product-detail {
+        flex-direction: column;
+        padding: 20px;
+    }
+    .product-detail img {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-list {
+        grid-template-columns: 1fr;
+    }
+    .product {
+        width: 100%;
+    }
+}
+
+
+/* 
+ * File: order-history.css
+ Order History CSS
+ * Mục đích: Định nghĩa kiểu dáng cho trang lịch sử đơn hàng (order_history.php) và modal chi tiết đơn hàng.
+ * Sử dụng: Nạp trong order_history.php cùng với global.css.
+ * Gộp lại khi triển khai: Kết hợp với global.css và các file khác.
+ */
+
+.order-table {
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.order-table th,
+.order-table td {
+    padding: 15px;
+    border-bottom: 1px solid #EDEDED;
+    text-align: center;
+}
+
+.order-table th {
+    background-color: #005662;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.order-table .status {
+    font-weight: 500;
+}
+
+.order-table .status-processing {
+    color: #F47920;
+}
+
+.order-table .status-completed {
+    color: #28A745;
+}
+
+.order-table .status-cancelled {
+    color: #D32F2F;
+}
+
+.order-table .view-details {
+    background-color: #005662;
+    color: #FFFFFF;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.order-table .view-details:hover {
+    background-color: #003D47;
+}
+
+.order-table .cancel-order {
+    color: #D32F2F;
+    text-decoration: none;
+    margin-left: 10px;
+    font-weight: 500;
+}
+
+.order-table .cancel-order:hover {
+    text-decoration: underline;
+}
+
+.empty-history {
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+}
+
+.empty-history a {
+    color: #F47920;
+    text-decoration: none;
+}
+
+.empty-history a:hover {
+    text-decoration: underline;
+}
+
+
+/* Modal */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+}
+
+.modal-content {
+    background-color: #FFFFFF;
+    margin: 10% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: slideIn 0.3s ease;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+}
+
+.close-modal:hover {
+    color: #D32F2F;
+}
+
+#order-details table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#order-details table th,
+#order-details table td {
+    padding: 10px;
+    border-bottom: 1px solid #EDEDED;
+    text-align: left;
+}
+
+#order-details table th {
+    background-color: #F5F6F5;
+    color: #005662;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .order-table {
+        display: block;
+        overflow-x: auto;
+    }
+    .order-table td,
+    .order-table th {
+        font-size: 14px;
+    }
+    .modal-content {
+        width: 95%;
+        margin: 20% auto;
+    }
+}
